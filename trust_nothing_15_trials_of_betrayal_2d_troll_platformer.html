@@ -1,0 +1,4786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRUST NOTHING — 15 Trials of Betrayal (2D Troll Platformer)</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwYjBjMTQiLz4KICA8cG9seWdvbiBwb2ludHM9IjgsNTYgMjAsMzQgMzIsNTYiIGZpbGw9IiNmZjJhNmQiLz4KICA8cG9seWdvbiBwb2ludHM9IjMyLDU2IDQ0LDM0IDU2LDU2IiBmaWxsPSIjZmYyYTZkIi8+CiAgPHJlY3QgeD0iMTgiIHk9IjEyIiB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHJ4PSI2IiBmaWxsPSIjMDBmMGZmIi8+CiAgPGNpcmNsZSBjeD0iMjYiIGN5PSIyNCIgcj0iMy41IiBmaWxsPSIjMGIwYzE0Ii8+CiAgPGNpcmNsZSBjeD0iMzgiIGN5PSIyNCIgcj0iMy41IiBmaWxsPSIjMGIwYzE0Ii8+CiAgPHBhdGggZD0iTTI1IDMzIFEzMiAyOSAzOSAzMyIgc3Ryb2tlPSIjMGIwYzE0IiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K" />
+  <style>
+/* css/style.css - TRUST NOTHING: 15 Trials of Betrayal */
+:root {
+  --bg-deep: #07080e;
+  --bg-panel: rgba(15, 18, 34, 0.94);
+  --bg-card: #161b33;
+  --border-subtle: rgba(148, 163, 184, 0.18);
+  --cyan: #00f0ff;
+  --pink: #ff2a6d;
+  --emerald: #05d5aa;
+  --gold: #ffd166;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 20%, #13182e 0%, #07080e 100%);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 8px 12px;
+  gap: 8px;
+}
+
+/* Top HUD Bar */
+.hud-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: rgba(15, 18, 34, 0.88);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 8px 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.hud-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 220px;
+  flex: 1;
+}
+
+.hud-level-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-level-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: var(--cyan);
+}
+
+.hud-subtitle {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.progress-track {
+  width: 100%;
+  max-width: 280px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 7%;
+  background: linear-gradient(90deg, var(--cyan), var(--emerald));
+  transition: width 0.25s ease;
+}
+
+.hud-stats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.stat-pill strong {
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #1e2646;
+  color: var(--text-main);
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  border-radius: 8px;
+  padding: 6px 11px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:hover {
+  background: #28325c;
+  border-color: var(--cyan);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00c6ff 0%, #05d5aa 100%);
+  color: #06101e;
+  border: none;
+  font-weight: 800;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #26d4ff 0%, #17e8bc 100%);
+  color: #06101e;
+}
+
+.btn-danger {
+  background: rgba(255, 42, 109, 0.18);
+  border-color: var(--pink);
+  color: #fda4af;
+}
+
+.btn-danger:hover {
+  background: var(--pink);
+  color: #ffffff;
+}
+
+/* Stage / Canvas Wrapper */
+.stage-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  width: 100%;
+  background: #090a10;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.65);
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  display: block;
+}
+
+/* Floating Banners inside Stage */
+.stage-banner {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgba(15, 18, 34, 0.92);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.82rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+#control-guide-banner {
+  top: 12px;
+  border-color: rgba(0, 240, 255, 0.4);
+}
+
+#death-banner {
+  bottom: 18px;
+  border-color: var(--pink);
+  background: rgba(28, 10, 24, 0.94);
+}
+
+#toast-banner {
+  top: 56px;
+  border-color: var(--emerald);
+  color: var(--emerald);
+  font-weight: 700;
+}
+
+.kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--cyan);
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 5px;
+}
+
+/* Modals & Menu Overlays */
+.overlay-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  background: rgba(7, 8, 14, 0.86);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 560px;
+  max-height: 92%;
+  overflow-y: auto;
+  background: var(--bg-panel);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-card.wide {
+  max-width: 760px;
+}
+
+.logo-banner {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+.menu-tagline {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.menu-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.menu-stat-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 8px;
+  text-align: center;
+}
+
+.menu-stat-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.menu-stat-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-top: 2px;
+}
+
+.menu-btn-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-btn-stack .btn {
+  padding: 11px 16px;
+  font-size: 0.92rem;
+}
+
+/* Level Selection Grid */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.level-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: left;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: transform 0.12s ease, border-color 0.15s ease;
+}
+
+.level-card.unlocked:hover {
+  border-color: var(--cyan);
+  transform: translateY(-2px);
+}
+
+.level-card.completed {
+  border-color: rgba(5, 213, 170, 0.5);
+}
+
+.level-card.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.level-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.level-num {
+  color: var(--cyan);
+}
+
+.level-status {
+  color: var(--gold);
+}
+
+.level-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.level-checkpoint-tag {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Settings Rows */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.86rem;
+}
+
+.settings-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input[type="range"] {
+  accent-color: var(--cyan);
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--cyan);
+  cursor: pointer;
+}
+
+/* Victory Breakdown */
+.victory-breakdown {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.victory-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Touch / On-screen Control Bar */
+.touch-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.touch-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-touch {
+  min-width: 58px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  .hud-subtitle {
+    display: none;
+  }
+  .modal-card {
+    padding: 16px;
+  }
+}
+
+/* 3 Difficulty Mode Selector (Easy / Medium / Hard) */
+.mode-selector-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mode-btn-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.mode-btn {
+  padding: 9px 10px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: #141930;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mode-btn:hover {
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+#btn-mode-easy.active-mode,
+.mode-badge-easy {
+  background: rgba(5, 213, 170, 0.2);
+  border-color: var(--emerald);
+  color: #34d399;
+}
+
+#btn-mode-medium.active-mode,
+.mode-badge-medium {
+  background: rgba(255, 209, 102, 0.2);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+#btn-mode-hard.active-mode,
+.mode-badge-hard {
+  background: rgba(255, 42, 109, 0.26);
+  border-color: var(--pink);
+  color: #fda4af;
+  box-shadow: 0 0 14px rgba(255, 42, 109, 0.35);
+}
+
+.mode-desc {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.35;
+}
+
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Gameplay HUD -->
+    <header class="hud-bar" aria-label="Game Status HUD">
+      <div class="hud-left">
+        <div class="hud-level-row">
+          <span id="hud-level" class="hud-level-title">LEVEL 1 / 15 — Trust Issues 101</span>
+        </div>
+        <span id="hud-subtitle" class="hud-subtitle">Welcome! The floor is definitely 100% solid. Probably.</span>
+        <div class="progress-track" title="Campaign Progress">
+          <div id="hud-progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="hud-stats">
+        <div class="stat-pill" title="Total Deaths">
+          <span>💀 Deaths:</span>
+          <strong id="hud-deaths">0</strong>
+        </div>
+        <div class="stat-pill" title="Session Timer">
+          <span>⏱ Time:</span>
+          <strong id="hud-time">00:00</strong>
+        </div>
+      </div>
+
+      <div class="hud-actions">
+        <button id="btn-hud-difficulty" type="button" class="btn mode-badge-medium" title="Click to Switch Difficulty (Easy / Medium / Hard)">🟡 MEDIUM</button>
+        <button id="btn-hud-restart" type="button" class="btn" title="Restart Level (R)">↺ Restart (R)</button>
+        <button id="btn-hud-pause" type="button" class="btn" title="Pause Game (Esc)">⏸ Pause</button>
+        <button id="btn-hud-levels" type="button" class="btn" title="Select Level">☰ Levels</button>
+        <button id="btn-hud-mute" type="button" class="btn" title="Mute / Unmute Audio (M)">🔊 Audio</button>
+        <button id="btn-hud-menu" type="button" class="btn" title="Main Menu">⌂ Menu</button>
+      </div>
+    </header>
+
+    <!-- Main Stage & Overlays -->
+    <main class="stage-container">
+      <canvas id="game-canvas" width="960" height="540"></canvas>
+
+      <!-- Brief Control Guide Banner -->
+      <div id="control-guide-banner" class="stage-banner hidden">
+        <span>
+          Move: <span class="kbd">A</span><span class="kbd">D</span> or <span class="kbd">◄</span><span class="kbd">►</span>
+          &nbsp;|&nbsp; Jump: <span class="kbd">Space</span> / <span class="kbd">W</span> / <span class="kbd">▲</span>
+          &nbsp;|&nbsp; Restart: <span class="kbd">R</span>
+          &nbsp;|&nbsp; Pause: <span class="kbd">Esc</span>
+        </span>
+        <button id="btn-dismiss-guide" type="button" class="btn">Got It ✕</button>
+      </div>
+
+      <!-- Toast Banner -->
+      <div id="toast-banner" class="stage-banner hidden">🚩 Checkpoint Activated!</div>
+
+      <!-- Death Feedback Banner -->
+      <div id="death-banner" class="stage-banner hidden">
+        <span>💀 <strong id="death-reason-text">Betrayed by the floor!</strong></span>
+        <button id="btn-death-retry" type="button" class="btn btn-danger">Retry Now (R)</button>
+      </div>
+
+      <!-- MAIN MENU OVERLAY -->
+      <section id="menu-overlay" class="overlay-modal" aria-label="Main Menu">
+        <div class="modal-card">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgOTAiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJjeWFuR3JhZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDBmMGZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzA1ZDVhYSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0icGlua0dyYWQiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmMmE2ZCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZjdiMDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjQiIHk9IjgiIHdpZHRoPSI3NCIgaGVpZ2h0PSI3NCIgcng9IjE2IiBmaWxsPSIjMTIxNTI2IiBzdHJva2U9IiNmZjJhNmQiIHN0cm9rZS13aWR0aD0iMyIvPgogIDxwb2x5Z29uIHBvaW50cz0iMTQsNzYgMjgsNTAgNDIsNzYiIGZpbGw9InVybCgjcGlua0dyYWQpIi8+CiAgPHBvbHlnb24gcG9pbnRzPSI0MCw3NiA1NCw1MCA2OCw3NiIgZmlsbD0idXJsKCNwaW5rR3JhZCkiLz4KICA8cmVjdCB4PSIyNCIgeT0iMjAiIHdpZHRoPSIzNCIgaGVpZ2h0PSIzNCIgcng9IjciIGZpbGw9InVybCgjY3lhbkdyYWQpIi8+CiAgPGNpcmNsZSBjeD0iMzQiIGN5PSIzNCIgcj0iNCIgZmlsbD0iIzBiMGMxNCIvPgogIDxjaXJjbGUgY3g9IjQ4IiBjeT0iMzQiIHI9IjQiIGZpbGw9IiMwYjBjMTQiLz4KICA8bGluZSB4MT0iMzEiIHkxPSIyNyIgeDI9IjM4IiB5Mj0iMzAiIHN0cm9rZT0iIzBiMGMxNCIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSI1MSIgeTE9IjI3IiB4Mj0iNDQiIHkyPSIzMCIgc3Ryb2tlPSIjMGIwYzE0IiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHJlY3QgeD0iMzQiIHk9IjQzIiB3aWR0aD0iMTQiIGhlaWdodD0iNCIgcng9IjIiIGZpbGw9IiMwYjBjMTQiLz4KICA8dGV4dCB4PSI5NCIgeT0iNDgiIGZvbnQtZmFtaWx5PSJJbnRlciwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjZmZmZmZmIiBsZXR0ZXItc3BhY2luZz0iMiI+VFJVU1QgPHRzcGFuIGZpbGw9IiNmZjJhNmQiPk5PVEhJTkc8L3RzcGFuPjwvdGV4dD4KICA8dGV4dCB4PSI5NiIgeT0iNzIiIGZvbnQtZmFtaWx5PSJJbnRlciwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOTRhM2I4IiBsZXR0ZXItc3BhY2luZz0iMy41Ij4xNSBUUklBTFMgT0YgQkVUUkFZQUw8L3RleHQ+Cjwvc3ZnPgo=" alt="TRUST NOTHING: 15 Trials of Betrayal" class="logo-banner" />
+          <p class="menu-tagline">
+            A devious 2D troll platformer of collapsing bridges, fake exits, jump-sensors, and surprise hazards. Expect the unexpected—every trap has a tell!
+          </p>
+
+          <div class="menu-stats-row">
+            <div class="menu-stat-box">
+              <div class="menu-stat-label">Unlocked</div>
+              <div id="stat-unlocked" class="menu-stat-val">1 / 15</div>
+            </div>
+            <div class="menu-stat-box">
+              <div class="menu-stat-label">Cleared</div>
+              <div id="stat-cleared" class="menu-stat-val">0 / 15</div>
+            </div>
+            <div class="menu-stat-box">
+              <div class="menu-stat-label">Total Deaths</div>
+              <div id="stat-deaths" class="menu-stat-val">0</div>
+            </div>
+          </div>
+
+          <div class="mode-selector-box" aria-label="Select Difficulty Mode">
+            <div class="mode-btn-group">
+              <button id="btn-mode-easy" type="button" class="mode-btn">🟢 Easy</button>
+              <button id="btn-mode-medium" type="button" class="mode-btn active-mode">🟡 Medium</button>
+              <button id="btn-mode-hard" type="button" class="mode-btn">🔥 Hard</button>
+            </div>
+            <div id="mode-desc-text" class="mode-desc">
+              Classic Betrayal: Balanced trap speeds, subtle visual tells, and checkpoints on 9 major levels.
+            </div>
+          </div>
+
+          <div class="menu-btn-stack">
+            <button id="btn-play" type="button" class="btn btn-primary">▶ Start Game</button>
+            <button id="btn-level-select" type="button" class="btn">☰ Select Level (15 Trials)</button>
+            <button id="btn-controls" type="button" class="btn">⌨ Controls &amp; Survival Guide</button>
+            <button id="btn-settings" type="button" class="btn">⚙ Audio &amp; Game Settings</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEVEL SELECT MODAL -->
+      <section id="level-select-modal" class="overlay-modal hidden" aria-label="Level Selection">
+        <div class="modal-card wide">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2 style="font-size:1.2rem;color:var(--cyan);">Select a Trial (15 Levels)</h2>
+            <button id="btn-close-levels" type="button" class="btn">✕ Close</button>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);">
+            Beat each level to unlock the next, or enable <strong>Unlock All Levels</strong> in Settings to practice any stage freely.
+          </p>
+          <div id="level-grid" class="level-grid"></div>
+        </div>
+      </section>
+
+      <!-- PAUSE MODAL -->
+      <section id="pause-modal" class="overlay-modal hidden" aria-label="Game Paused">
+        <div class="modal-card">
+          <h2 style="text-align:center;color:var(--cyan);">⏸ Game Paused</h2>
+          <p style="text-align:center;font-size:0.84rem;color:var(--text-muted);">
+            Take a breath. The spikes will wait patiently for your return.
+          </p>
+          <div class="menu-btn-stack">
+            <button id="btn-resume" type="button" class="btn btn-primary">▶ Resume Game (Esc)</button>
+            <button id="btn-pause-restart" type="button" class="btn">↺ Restart Current Level (R)</button>
+            <button id="btn-pause-levels" type="button" class="btn">☰ Level Select</button>
+            <button id="btn-pause-settings" type="button" class="btn">⚙ Settings</button>
+            <button id="btn-pause-menu" type="button" class="btn btn-danger">⌂ Return to Main Menu</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTROLS & SURVIVAL GUIDE MODAL -->
+      <section id="controls-modal" class="overlay-modal hidden" aria-label="Controls Guide">
+        <div class="modal-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2 style="font-size:1.15rem;color:var(--cyan);">⌨ Controls &amp; Trap Survival Guide</h2>
+            <button id="btn-close-controls" type="button" class="btn">✕ Close</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:0.84rem;line-height:1.5;">
+            <div><span class="kbd">A</span> / <span class="kbd">D</span> or <span class="kbd">Left</span> / <span class="kbd">Right</span> — Move left and right</div>
+            <div><span class="kbd">Space</span> / <span class="kbd">W</span> / <span class="kbd">Up Arrow</span> — Jump (hold longer for higher jumps)</div>
+            <div><span class="kbd">R</span> — Instant restart at current level or active checkpoint</div>
+            <div><span class="kbd">Esc</span> / <span class="kbd">P</span> — Pause or resume the game</div>
+            <div><span class="kbd">M</span> — Mute or unmute audio</div>
+          </div>
+          <div style="border-top:1px solid var(--border-subtle);padding-top:10px;font-size:0.81rem;color:var(--text-muted);line-height:1.5;">
+            <strong style="color:var(--gold);">Pro Survival Tips:</strong><br/>
+            • <strong>Cracked Blue Floors:</strong> Collapse shortly after you touch them—keep sprinting!<br/>
+            • <strong>Purple Platforms:</strong> Vanish after a brief shimmer and respawn 2 seconds later.<br/>
+            • <strong>No-Jump Zones:</strong> Pressing Jump inside a dashed pink sensor triggers ceiling spikes. Walk off ledges instead!<br/>
+            • <strong>Checkpoints (🚩):</strong> Touch the golden flag on longer levels to save your respawn point.
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS MODAL -->
+      <section id="settings-modal" class="overlay-modal hidden" aria-label="Settings">
+        <div class="modal-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2 style="font-size:1.15rem;color:var(--cyan);">⚙ Audio &amp; Game Settings</h2>
+            <button id="btn-close-settings" type="button" class="btn">✕ Close</button>
+          </div>
+
+          <div class="settings-row">
+            <label for="toggle-mute">Mute All Audio</label>
+            <input id="toggle-mute" type="checkbox" />
+          </div>
+
+          <div class="settings-row">
+            <label for="slider-bgm">Background Music Volume</label>
+            <div class="settings-control">
+              <input id="slider-bgm" type="range" min="0" max="100" value="35" />
+              <span id="val-bgm" style="min-width:38px;text-align:right;">35%</span>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <label for="slider-sfx">Sound Effects Volume</label>
+            <div class="settings-control">
+              <input id="slider-sfx" type="range" min="0" max="100" value="65" />
+              <span id="val-sfx" style="min-width:38px;text-align:right;">65%</span>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <label for="toggle-shake">Screen Shake Effects</label>
+            <input id="toggle-shake" type="checkbox" checked />
+          </div>
+
+          <div class="settings-row">
+            <label for="toggle-hitboxes">Show Trap Hitboxes &amp; Sensors</label>
+            <input id="toggle-hitboxes" type="checkbox" />
+          </div>
+
+          <div class="settings-row">
+            <label for="toggle-unlock-all">Unlock All 15 Levels (Practice Mode)</label>
+            <input id="toggle-unlock-all" type="checkbox" />
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;">
+            <span style="font-size:0.82rem;color:var(--text-muted);">Saved Progress (localStorage)</span>
+            <button id="btn-reset-save" type="button" class="btn btn-danger">Reset Save Data</button>
+          </div>
+
+          <div id="reset-confirm-box" class="hidden" style="background:rgba(255,42,109,0.12);border:1px solid var(--pink);border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <span style="font-size:0.8rem;">Reset unlocked levels and death stats?</span>
+            <div style="display:flex;gap:6px;">
+              <button id="btn-confirm-reset" type="button" class="btn btn-danger">Yes, Reset</button>
+              <button id="btn-cancel-reset" type="button" class="btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL VICTORY MODAL -->
+      <section id="victory-modal" class="overlay-modal hidden" aria-label="Victory Screen">
+        <div class="modal-card">
+          <h2 style="text-align:center;font-size:1.5rem;color:var(--emerald);">🏆 ALL 15 TRIALS CONQUERED!</h2>
+          <p style="text-align:center;font-size:0.86rem;color:var(--text-muted);">
+            You survived every fake exit, collapsing bridge, jump sensor, and ceiling crusher!
+          </p>
+
+          <div class="menu-stats-row">
+            <div class="menu-stat-box">
+              <div class="menu-stat-label">Trials Cleared</div>
+              <div class="menu-stat-val">15 / 15</div>
+            </div>
+            <div class="menu-stat-box">
+              <div class="menu-stat-label">Total Deaths</div>
+              <div id="victory-deaths" class="menu-stat-val">0</div>
+            </div>
+            <div class="menu-stat-box">
+              <div class="menu-stat-label">Total Time</div>
+              <div id="victory-time" class="menu-stat-val">00:00</div>
+            </div>
+          </div>
+
+          <div id="victory-breakdown" class="victory-breakdown"></div>
+
+          <div class="menu-btn-stack">
+            <button id="btn-victory-replay" type="button" class="btn btn-primary">▶ Play Again from Level 1</button>
+            <button id="btn-victory-levels" type="button" class="btn">☰ Replay Any Level</button>
+            <button id="btn-victory-menu" type="button" class="btn">⌂ Main Menu</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom On-Screen / Touch Control Bar -->
+    <footer class="touch-bar" aria-label="On-Screen Controls">
+      <div class="touch-group">
+        <button id="btn-touch-left" type="button" class="btn btn-touch">◄ Left</button>
+        <button id="btn-touch-right" type="button" class="btn btn-touch">Right ►</button>
+      </div>
+      <div style="font-size:0.75rem;color:var(--text-muted);text-align:center;">
+        Tip: Watch floor seams &amp; ceiling shadows carefully!
+      </div>
+      <div class="touch-group">
+        <button id="btn-touch-jump" type="button" class="btn btn-primary btn-touch">▲ Jump</button>
+      </div>
+    </footer>
+  </div>
+
+<script>
+/**
+ * js/audio.js
+ * Procedural Web Audio API Sound Effects & Chiptune/Synthwave Background Music
+ * Zero external audio files required - works 100% offline.
+ */
+(function (global) {
+  'use strict';
+
+  class AudioManager {
+    constructor() {
+      this.ctx = null;
+      this.isMuted = false;
+      this.bgmVolume = 0.35;
+      this.sfxVolume = 0.65;
+      this.bgmPlaying = false;
+      this.bgmTimer = null;
+      this.stepIndex = 0;
+
+      this.loadSettings();
+    }
+
+    loadSettings() {
+      try {
+        const raw = localStorage.getItem('trust_nothing_audio_v1');
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (typeof data.isMuted === 'boolean') this.isMuted = data.isMuted;
+          if (typeof data.bgmVolume === 'number') this.bgmVolume = Math.max(0, Math.min(1, data.bgmVolume));
+          if (typeof data.sfxVolume === 'number') this.sfxVolume = Math.max(0, Math.min(1, data.sfxVolume));
+        }
+      } catch (e) {
+        // Ignore storage restrictions
+      }
+    }
+
+    saveSettings() {
+      try {
+        localStorage.setItem('trust_nothing_audio_v1', JSON.stringify({
+          isMuted: this.isMuted,
+          bgmVolume: this.bgmVolume,
+          sfxVolume: this.sfxVolume
+        }));
+      } catch (e) {
+        // Ignore storage restrictions
+      }
+    }
+
+    initContext() {
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume().catch(function () {});
+      }
+    }
+
+    setMuted(muted) {
+      this.isMuted = !!muted;
+      this.saveSettings();
+      if (this.isMuted) {
+        this.stopBGM();
+      } else {
+        this.startBGM();
+      }
+    }
+
+    toggleMute() {
+      this.setMuted(!this.isMuted);
+      return this.isMuted;
+    }
+
+    setBGMVolume(val) {
+      this.bgmVolume = Math.max(0, Math.min(1, parseFloat(val) || 0));
+      this.saveSettings();
+    }
+
+    setSFXVolume(val) {
+      this.sfxVolume = Math.max(0, Math.min(1, parseFloat(val) || 0));
+      this.saveSettings();
+    }
+
+    playTone(freqStart, freqEnd, duration, type, gainScale, delay) {
+      if (this.isMuted || this.sfxVolume <= 0.01) return;
+      this.initContext();
+      if (!this.ctx) return;
+
+      const now = this.ctx.currentTime + (delay || 0);
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = type || 'square';
+      osc.frequency.setValueAtTime(freqStart, now);
+      if (freqEnd && freqEnd !== freqStart) {
+        osc.frequency.exponentialRampToValueAtTime(Math.max(20, freqEnd), now + duration);
+      }
+
+      const peak = Math.max(0.001, (gainScale || 0.25) * this.sfxVolume);
+      gain.gain.setValueAtTime(peak, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + duration + 0.01);
+    }
+
+    playJump() {
+      this.playTone(190, 520, 0.13, 'square', 0.22, 0);
+    }
+
+    playLand() {
+      this.playTone(110, 55, 0.06, 'triangle', 0.18, 0);
+    }
+
+    playTrap() {
+      this.playTone(580, 240, 0.11, 'sawtooth', 0.26, 0);
+      this.playTone(760, 320, 0.09, 'square', 0.20, 0.04);
+    }
+
+    playFakeExit() {
+      this.playTone(440, 392, 0.12, 'sawtooth', 0.25, 0);
+      this.playTone(392, 349, 0.12, 'sawtooth', 0.25, 0.12);
+      this.playTone(349, 220, 0.28, 'sawtooth', 0.28, 0.24);
+    }
+
+    playDeath() {
+      this.playTone(300, 75, 0.22, 'sawtooth', 0.35, 0);
+      this.playTone(210, 52, 0.26, 'square', 0.28, 0.05);
+      this.playTone(140, 40, 0.30, 'triangle', 0.30, 0.10);
+    }
+
+    playCheckpoint() {
+      this.playTone(523.25, 523.25, 0.09, 'triangle', 0.28, 0);
+      this.playTone(659.25, 659.25, 0.11, 'triangle', 0.28, 0.08);
+      this.playTone(783.99, 1046.5, 0.18, 'sine', 0.30, 0.16);
+    }
+
+    playWin() {
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      for (let i = 0; i < notes.length; i++) {
+        this.playTone(notes[i], notes[i] * 1.02, 0.16, 'triangle', 0.30, i * 0.085);
+      }
+    }
+
+    playClick() {
+      this.playTone(660, 880, 0.045, 'sine', 0.16, 0);
+    }
+
+    startBGM() {
+      if (this.bgmPlaying || this.isMuted) return;
+      this.initContext();
+      if (!this.ctx) return;
+
+      this.bgmPlaying = true;
+      // Sneaky, playful minor-key synth bass & arpeggio loop
+      const bassLine = [
+        110, 0, 110, 130.81, 146.83, 0, 130.81, 123.47,
+        110, 0, 110, 164.81, 146.83, 130.81, 123.47, 98.00
+      ];
+      const leadLine = [
+        440, 0, 523.25, 0, 587.33, 523.25, 440, 0,
+        392, 0, 440, 523.25, 493.88, 0, 392, 0
+      ];
+
+      const stepMs = 175;
+      const tick = () => {
+        if (!this.bgmPlaying || this.isMuted) return;
+        if (this.ctx && this.ctx.state === 'running' && this.bgmVolume > 0.01) {
+          const idx = this.stepIndex % bassLine.length;
+          const bFreq = bassLine[idx];
+          const lFreq = leadLine[idx];
+          const now = this.ctx.currentTime;
+
+          if (bFreq > 0) {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(bFreq, now);
+            const g = 0.11 * this.bgmVolume;
+            gain.gain.setValueAtTime(g, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.16);
+          }
+
+          if (lFreq > 0 && (this.stepIndex % 32 >= 8)) {
+            const osc2 = this.ctx.createOscillator();
+            const gain2 = this.ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(lFreq, now);
+            const g2 = 0.065 * this.bgmVolume;
+            gain2.gain.setValueAtTime(g2, now);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+            osc2.connect(gain2);
+            gain2.connect(this.ctx.destination);
+            osc2.start(now);
+            osc2.stop(now + 0.14);
+          }
+          this.stepIndex++;
+        }
+        this.bgmTimer = setTimeout(tick, stepMs);
+      };
+
+      this.bgmTimer = setTimeout(tick, stepMs);
+    }
+
+    stopBGM() {
+      this.bgmPlaying = false;
+      if (this.bgmTimer) {
+        clearTimeout(this.bgmTimer);
+        this.bgmTimer = null;
+      }
+    }
+  }
+
+  global.AudioManager = AudioManager;
+})(window);
+
+/**
+ * js/traps.js
+ * Implements all 10+ Troll Trap Mechanics, Difficulty Scaling (Easy/Medium/Hard),
+ * Particle System, and AABB helpers.
+ */
+(function (global) {
+  'use strict';
+
+  function aabbOverlap(a, b) {
+    return (
+      a.x < b.x + b.w &&
+      a.x + a.w > b.x &&
+      a.y < b.y + b.h &&
+      a.y + a.h > b.y
+    );
+  }
+
+  class ParticleSystem {
+    constructor() {
+      this.particles = [];
+      this.floatingTexts = [];
+    }
+
+    clear() {
+      this.particles.length = 0;
+      this.floatingTexts.length = 0;
+    }
+
+    emitBurst(x, y, color, count, speedMin, speedMax, sizeMin, sizeMax, gravityScale) {
+      const n = count || 16;
+      for (let i = 0; i < n; i++) {
+        const angle = (Math.PI * 2 * i) / n + (Math.random() - 0.5) * 0.5;
+        const speed = (speedMin || 60) + Math.random() * ((speedMax || 240) - (speedMin || 60));
+        this.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: (sizeMin || 3) + Math.random() * ((sizeMax || 7) - (sizeMin || 3)),
+          color: color || '#00f0ff',
+          alpha: 1,
+          life: 0,
+          maxLife: 0.35 + Math.random() * 0.4,
+          gravity: (typeof gravityScale === 'number' ? gravityScale : 1) * 520,
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 10
+        });
+      }
+    }
+
+    emitFloatingText(x, y, text, color) {
+      this.floatingTexts.push({
+        x: x,
+        y: y,
+        text: text,
+        color: color || '#ffd166',
+        life: 0,
+        maxLife: 1.25
+      });
+    }
+
+    update(dt) {
+      for (let i = this.particles.length - 1; i >= 0; i--) {
+        const p = this.particles[i];
+        p.life += dt;
+        if (p.life >= p.maxLife) {
+          this.particles.splice(i, 1);
+          continue;
+        }
+        p.vy += p.gravity * dt;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.rot += p.vRot * dt;
+        p.alpha = Math.max(0, 1 - p.life / p.maxLife);
+      }
+
+      for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
+        const ft = this.floatingTexts[i];
+        ft.life += dt;
+        ft.y -= 28 * dt;
+        if (ft.life >= ft.maxLife) {
+          this.floatingTexts.splice(i, 1);
+        }
+      }
+    }
+
+    render(ctx) {
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      }
+
+      for (let i = 0; i < this.floatingTexts.length; i++) {
+        const ft = this.floatingTexts[i];
+        const alpha = Math.max(0, 1 - ft.life / ft.maxLife);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.font = 'bold 14px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#0b0c14';
+        ctx.fillText(ft.text, ft.x + 1, ft.y + 1);
+        ctx.fillStyle = ft.color;
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+      }
+    }
+  }
+
+  class Trap {
+    constructor(cfg, diffCfg) {
+      this.raw = JSON.parse(JSON.stringify(cfg));
+      this.diffCfg = diffCfg || {
+        id: 'medium',
+        delayMult: 1.0,
+        speedMult: 1.0,
+        timedPeriodMult: 1.0,
+        timedActiveMult: 1.0,
+        hitboxPad: 4,
+        invisibleSpikes: false
+      };
+      this.reset();
+    }
+
+    reset() {
+      const c = JSON.parse(JSON.stringify(this.raw));
+      const d = this.diffCfg;
+      this.type = c.type;
+      this.x = c.x;
+      this.y = c.y;
+      this.w = c.w || 32;
+      this.h = c.h || 16;
+      this.dir = c.dir || 'up';
+      this.triggerBox = c.triggerBox || null;
+      this.state = 'idle';
+      this.timer = c.initialTimer || 0;
+      this.vx = 0;
+      this.vy = 0;
+      this.dx = 0;
+      this.dy = 0;
+      this.alpha = 1;
+      this.shakeX = 0;
+      this.label = c.label || '';
+      this.trollMsg = c.trollMsg || '';
+
+      // Apply difficulty scaling
+      const baseDelay = typeof c.delay === 'number' ? c.delay : 0.25;
+      if (this.type === 'pop_spikes' && d.id === 'hard') {
+        this.delay = 0.025;
+      } else if ((this.type === 'collapse_floor' || this.type === 'vanish_plat') && d.id === 'hard') {
+        this.delay = Math.max(0.26, baseDelay * 0.85);
+      } else if (this.type === 'fake_safe' && d.id === 'hard') {
+        this.delay = Math.max(0.20, baseDelay * 0.72);
+      } else if (this.type === 'falling_block' && d.id === 'hard') {
+        this.delay = 0.04;
+      } else {
+        this.delay = baseDelay * (d.delayMult || 1.0);
+      }
+
+      this.respawnTime = (typeof c.respawnTime === 'number' ? c.respawnTime : 2.0) * (d.id === 'hard' ? 1.2 : 1.0);
+
+      const baseSpeed = c.speed || (this.type === 'falling_block' ? 560 : 160);
+      if (this.type === 'moving_plat') {
+        this.speed = baseSpeed * (d.id === 'hard' ? 1.18 : d.id === 'easy' ? 0.88 : 1.0);
+      } else if (this.type === 'falling_block' && d.id === 'hard') {
+        this.speed = 820;
+      } else {
+        this.speed = baseSpeed * (d.speedMult || 1.0);
+      }
+
+      this.endX = typeof c.endX === 'number' ? c.endX : this.x;
+      this.endY = typeof c.endY === 'number' ? c.endY : this.y;
+      this.startX = this.x;
+      this.startY = this.y;
+      this.patrol = !!c.patrol;
+      this.forward = true;
+      this.period = (c.period || 2.0) * (d.timedPeriodMult || 1.0);
+      this.activeRatio = Math.min(0.55, Math.max(0.22, (c.activeRatio || 0.35) * (d.timedActiveMult || 1.0)));
+      this.phase = c.phase || 0;
+      this.oneShot = d.id === 'hard' ? false : (c.oneShot !== false);
+      this.triggeredOnce = false;
+    }
+
+    isSolidForPlayer() {
+      if (this.type === 'vanish_plat') return this.state !== 'gone';
+      if (this.type === 'collapse_floor') return this.state !== 'gone';
+      if (this.type === 'moving_plat' || this.type === 'sliding_floor') return true;
+      if (this.type === 'fake_safe') return true;
+      return false;
+    }
+
+    getSolidRect() {
+      return {
+        x: this.x,
+        y: this.y,
+        w: this.w,
+        h: this.h,
+        vx: this.vx,
+        vy: this.vy,
+        trapRef: this
+      };
+    }
+
+    onPlayerLanded(player, audio, particles) {
+      if (this.type === 'vanish_plat' && this.state === 'idle') {
+        this.state = 'warning';
+        this.timer = 0;
+        if (audio) audio.playTrap();
+      } else if (this.type === 'collapse_floor' && this.state === 'idle') {
+        this.state = 'warning';
+        this.timer = 0;
+        if (audio) audio.playTrap();
+      } else if (this.type === 'fake_safe' && this.state === 'idle') {
+        this.state = 'warning';
+        this.timer = 0;
+        if (audio) audio.playTrap();
+        if (particles) {
+          particles.emitFloatingText(this.x + this.w / 2, this.y - 18, 'WAIT A SECOND...', '#ff2a6d');
+        }
+      }
+    }
+
+    update(dt, player, audio, particles, game) {
+      this.dx = 0;
+      this.dy = 0;
+      this.vx = 0;
+      this.vy = 0;
+      this.shakeX = 0;
+
+      const playerBox = { x: player.x, y: player.y, w: player.w, h: player.h };
+
+      switch (this.type) {
+        case 'static_spikes':
+          break;
+
+        case 'pop_spikes': {
+          const tBox = this.triggerBox || {
+            x: this.x - 28,
+            y: this.y - 60,
+            w: this.w + 56,
+            h: this.h + 80
+          };
+          if (this.state === 'idle' && !player.dead && aabbOverlap(playerBox, tBox)) {
+            this.state = 'warning';
+            this.timer = 0;
+            if (audio) audio.playTrap();
+          } else if (this.state === 'warning') {
+            this.timer += dt;
+            if (this.timer >= this.delay) {
+              this.state = 'active';
+              this.timer = 0;
+              if (particles) {
+                particles.emitBurst(this.x + this.w / 2, this.y + this.h / 2, '#ff2a6d', 10, 40, 140, 2, 5, 0.5);
+              }
+            }
+          } else if (this.state === 'active' && !this.oneShot) {
+            this.timer += dt;
+            if (this.timer >= 1.1 && !aabbOverlap(playerBox, tBox)) {
+              this.state = 'idle';
+            }
+          }
+          break;
+        }
+
+        case 'vanish_plat': {
+          if (this.state === 'warning') {
+            this.timer += dt;
+            this.shakeX = Math.sin(this.timer * 55) * 2.5;
+            if (this.timer >= this.delay) {
+              this.state = 'gone';
+              this.timer = 0;
+              if (particles) {
+                particles.emitBurst(this.x + this.w / 2, this.y + this.h / 2, '#a855f7', 12, 30, 120, 3, 6, 0.2);
+              }
+            }
+          } else if (this.state === 'gone') {
+            this.timer += dt;
+            if (this.timer >= this.respawnTime) {
+              if (!aabbOverlap(playerBox, { x: this.x, y: this.y, w: this.w, h: this.h })) {
+                this.state = 'idle';
+                this.timer = 0;
+              }
+            }
+          }
+          break;
+        }
+
+        case 'collapse_floor': {
+          if (this.state === 'idle' && this.triggerBox && !player.dead && aabbOverlap(playerBox, this.triggerBox)) {
+            this.state = 'warning';
+            this.timer = 0;
+            if (audio) audio.playTrap();
+          } else if (this.state === 'warning') {
+            this.timer += dt;
+            this.shakeX = Math.sin(this.timer * 60) * 3;
+            if (this.timer >= this.delay) {
+              this.state = 'active';
+              this.timer = 0;
+              if (particles) {
+                particles.emitBurst(this.x + this.w / 2, this.y, '#fbbf24', 12, 40, 150, 3, 6, 0.8);
+              }
+            }
+          } else if (this.state === 'active') {
+            this.vy = 480 * (this.diffCfg.speedMult || 1.0);
+            this.dy = this.vy * dt;
+            this.y += this.dy;
+            if (this.y > 600) {
+              this.state = 'gone';
+            }
+          }
+          break;
+        }
+
+        case 'fake_safe': {
+          if (this.state === 'warning') {
+            this.timer += dt;
+            this.shakeX = Math.sin(this.timer * 50) * 2.5;
+            if (this.timer >= this.delay) {
+              this.state = 'active';
+              this.timer = 0;
+              if (audio) audio.playTrap();
+              if (particles) {
+                particles.emitBurst(this.x + this.w / 2, this.y - 8, '#ff2a6d', 14, 50, 180, 3, 6, 0.5);
+              }
+            }
+          } else if (this.state === 'active') {
+            this.timer += dt;
+            if (this.timer >= 1.6) {
+              this.state = 'idle';
+              this.timer = 0;
+            }
+          }
+          break;
+        }
+
+        case 'moving_spike':
+        case 'moving_plat':
+        case 'sliding_floor': {
+          const shouldMove = this.patrol || this.state === 'active';
+          if (!this.patrol && this.state === 'idle') {
+            const tBox = this.triggerBox || {
+              x: this.x - 90,
+              y: this.y - 90,
+              w: this.w + 180,
+              h: this.h + 180
+            };
+            if (!player.dead && aabbOverlap(playerBox, tBox)) {
+              this.state = 'active';
+              if (audio && this.type !== 'moving_plat') audio.playTrap();
+            }
+          }
+
+          if (shouldMove) {
+            const targetX = this.forward ? this.endX : this.startX;
+            const targetY = this.forward ? this.endY : this.startY;
+            const distX = targetX - this.x;
+            const distY = targetY - this.y;
+            const dist = Math.hypot(distX, distY);
+
+            if (dist <= this.speed * dt) {
+              this.dx = targetX - this.x;
+              this.dy = targetY - this.y;
+              this.x = targetX;
+              this.y = targetY;
+              if (this.patrol) {
+                this.forward = !this.forward;
+              } else {
+                this.state = 'done';
+              }
+            } else if (dist > 0.001) {
+              this.vx = (distX / dist) * this.speed;
+              this.vy = (distY / dist) * this.speed;
+              this.dx = this.vx * dt;
+              this.dy = this.vy * dt;
+              this.x += this.dx;
+              this.y += this.dy;
+            }
+          }
+          break;
+        }
+
+        case 'jump_trap': {
+          const zBox = this.triggerBox || {
+            x: this.x - 40,
+            y: this.y,
+            w: this.w + 80,
+            h: 180
+          };
+          const inZone = !player.dead && aabbOverlap(playerBox, zBox);
+          if (this.state === 'idle' && inZone && player.justJumped) {
+            this.state = 'active';
+            this.timer = 0;
+            if (audio) audio.playTrap();
+            if (particles) {
+              particles.emitBurst(this.x + this.w / 2, this.y + this.h, '#ff2a6d', 14, 50, 170, 3, 6, 0.5);
+              particles.emitFloatingText(this.x + this.w / 2, this.y + this.h + 24, 'WHY DID YOU JUMP?!', '#ff2a6d');
+            }
+          } else if (this.state === 'active') {
+            this.timer += dt;
+            if (this.timer >= 0.85) {
+              this.state = 'idle';
+              this.timer = 0;
+            }
+          }
+          break;
+        }
+
+        case 'falling_block': {
+          const tBox = this.triggerBox || {
+            x: this.x - 18,
+            y: this.y,
+            w: this.w + 36,
+            h: Math.max(120, this.endY - this.y + this.h)
+          };
+          if (this.state === 'idle' && !player.dead && aabbOverlap(playerBox, tBox)) {
+            this.state = 'warning';
+            this.timer = 0;
+            if (audio) audio.playTrap();
+          } else if (this.state === 'warning') {
+            this.timer += dt;
+            this.shakeX = Math.sin(this.timer * 65) * 3;
+            if (this.timer >= this.delay) {
+              this.state = 'active';
+              this.timer = 0;
+            }
+          } else if (this.state === 'active') {
+            this.vy = this.speed || 540;
+            this.dy = this.vy * dt;
+            this.y += this.dy;
+            if (this.y >= this.endY) {
+              this.y = this.endY;
+              this.vy = 0;
+              this.dy = 0;
+              this.state = 'cooldown';
+              this.timer = 0;
+              if (game) game.addScreenShake(5, 0.14);
+              if (particles) {
+                particles.emitBurst(this.x + this.w / 2, this.y + this.h, '#ff2a6d', 10, 40, 130, 3, 5, 0.6);
+              }
+            }
+          } else if (this.state === 'cooldown') {
+            this.timer += dt;
+            const waitTime = this.diffCfg.id === 'hard' ? 0.45 : 0.72;
+            if (this.timer >= waitTime) {
+              const retractSpeed = this.diffCfg.id === 'hard' ? 420 : 220;
+              this.vy = -retractSpeed;
+              this.y -= retractSpeed * dt;
+              if (this.y <= this.startY) {
+                this.y = this.startY;
+                this.vy = 0;
+                this.state = 'idle';
+                this.timer = 0;
+              }
+            }
+          }
+          break;
+        }
+
+        case 'fake_exit': {
+          if (this.state === 'idle' && !player.dead && aabbOverlap(playerBox, { x: this.x, y: this.y, w: this.w, h: this.h })) {
+            this.state = 'gone';
+            if (audio) audio.playFakeExit();
+            if (particles) {
+              particles.emitBurst(this.x + this.w / 2, this.y + this.h / 2, '#ffd166', 24, 60, 220, 4, 8, 0.6);
+              particles.emitFloatingText(
+                this.x + this.w / 2,
+                this.y - 12,
+                this.trollMsg || 'FAKE EXIT! KEEP GOING!',
+                '#ffd166'
+              );
+            }
+          }
+          break;
+        }
+
+        case 'timed_spike': {
+          this.timer += dt;
+          const cycle = ((this.timer + this.phase) % this.period) / this.period;
+          if (cycle < this.activeRatio) {
+            this.state = 'active';
+          } else if (cycle > 0.85) {
+            this.state = 'warning';
+          } else {
+            this.state = 'idle';
+          }
+          break;
+        }
+      }
+    }
+
+    getLethalHitbox() {
+      const pad = typeof this.diffCfg.hitboxPad === 'number' ? this.diffCfg.hitboxPad : 4;
+      switch (this.type) {
+        case 'static_spikes':
+          return {
+            x: this.x + pad,
+            y: this.y + pad,
+            w: Math.max(4, this.w - pad * 2),
+            h: Math.max(4, this.h - pad * 2),
+            reason: this.trollMsg || 'Impaled on spikes! Watch your footing.'
+          };
+
+        case 'pop_spikes':
+          if (this.state !== 'active') return null;
+          return {
+            x: this.x + pad,
+            y: this.y + pad,
+            w: Math.max(4, this.w - pad * 2),
+            h: Math.max(4, this.h - pad * 2),
+            reason: this.trollMsg || 'Surprise spikes! Look out for hidden floor traps.'
+          };
+
+        case 'fake_safe':
+          if (this.state !== 'active') return null;
+          return {
+            x: this.x + 4,
+            y: this.y - 22,
+            w: Math.max(8, this.w - 8),
+            h: 22,
+            reason: this.trollMsg || 'Never trust a neon "SAFE ZONE" sign!'
+          };
+
+        case 'moving_spike':
+          return {
+            x: this.x + pad,
+            y: this.y + pad,
+            w: Math.max(4, this.w - pad * 2),
+            h: Math.max(4, this.h - pad * 2),
+            reason: this.trollMsg || 'Sliced by a moving spike trap!'
+          };
+
+        case 'jump_trap':
+          if (this.state !== 'active') return null;
+          return {
+            x: this.x + 4,
+            y: this.y,
+            w: Math.max(8, this.w - 8),
+            h: this.h + 36,
+            reason: this.trollMsg || 'Jump sensor triggered! Try walking without jumping there.'
+          };
+
+        case 'falling_block':
+          return {
+            x: this.x + 4,
+            y: this.y + 4,
+            w: Math.max(8, this.w - 8),
+            h: Math.max(8, this.h - 6),
+            reason: this.trollMsg || 'Crushed from above! Bait the ceiling block first.'
+          };
+
+        case 'timed_spike':
+          if (this.state !== 'active') return null;
+          return {
+            x: this.x + pad,
+            y: this.y + pad,
+            w: Math.max(4, this.w - pad * 2),
+            h: Math.max(4, this.h - pad * 2),
+            reason: this.trollMsg || 'Mistimed the rhythmic spike gate!'
+          };
+
+        default:
+          return null;
+      }
+    }
+
+    drawSpikesRow(ctx, x, y, w, h, dir, color) {
+      ctx.fillStyle = color || '#ff2a6d';
+      const spikeW = 14;
+      const count = Math.max(1, Math.round(w / spikeW));
+      const step = w / count;
+
+      for (let i = 0; i < count; i++) {
+        const sx = x + i * step;
+        ctx.beginPath();
+        if (dir === 'down') {
+          ctx.moveTo(sx, y);
+          ctx.lineTo(sx + step / 2, y + h);
+          ctx.lineTo(sx + step, y);
+        } else {
+          ctx.moveTo(sx, y + h);
+          ctx.lineTo(sx + step / 2, y);
+          ctx.lineTo(sx + step, y + h);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    render(ctx, showHitboxes) {
+      ctx.save();
+
+      switch (this.type) {
+        case 'static_spikes': {
+          this.drawSpikesRow(ctx, this.x, this.y, this.w, this.h, this.dir, '#ff2a6d');
+          break;
+        }
+
+        case 'pop_spikes': {
+          if (this.state === 'idle') {
+            if (!this.diffCfg.invisibleSpikes) {
+              const tipH = this.diffCfg.id === 'easy' ? 5 : 3;
+              const alpha = this.diffCfg.id === 'easy' ? '0.85' : '0.55';
+              this.drawSpikesRow(
+                ctx,
+                this.x,
+                this.dir === 'down' ? this.y : this.y + this.h - tipH,
+                this.w,
+                tipH,
+                this.dir,
+                'rgba(255, 42, 109, ' + alpha + ')'
+              );
+            }
+          } else if (this.state === 'warning') {
+            this.drawSpikesRow(
+              ctx,
+              this.x,
+              this.dir === 'down' ? this.y : this.y + this.h - 7,
+              this.w,
+              7,
+              this.dir,
+              '#fbbf24'
+            );
+          } else if (this.state === 'active') {
+            this.drawSpikesRow(ctx, this.x, this.y, this.w, this.h, this.dir, '#ff2a6d');
+          }
+          break;
+        }
+
+        case 'vanish_plat': {
+          if (this.state === 'gone') {
+            ctx.strokeStyle = 'rgba(168, 85, 247, 0.28)';
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(this.x + 1, this.y + 1, this.w - 2, this.h - 2);
+          } else {
+            const ox = this.x + this.shakeX;
+            ctx.fillStyle = this.state === 'warning' ? '#d946ef' : '#7c3aed';
+            ctx.fillRect(ox, this.y, this.w, this.h);
+            ctx.strokeStyle = '#e879f9';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(ox + 1, this.y + 1, this.w - 2, this.h - 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            for (let px = ox + 8; px < ox + this.w - 6; px += 12) {
+              ctx.fillRect(px, this.y + this.h / 2 - 2, 4, 4);
+            }
+          }
+          break;
+        }
+
+        case 'collapse_floor': {
+          if (this.state !== 'gone') {
+            const ox = this.x + this.shakeX;
+            const isHardIdle = this.diffCfg.id === 'hard' && this.state === 'idle';
+            ctx.fillStyle = this.state === 'warning' ? '#475569' : (isHardIdle ? '#1f1224' : '#1e293b');
+            ctx.fillRect(ox, this.y, this.w, this.h);
+            ctx.fillStyle = this.state === 'warning' ? '#fbbf24' : (isHardIdle ? '#ff2a6d' : '#38bdf8');
+            ctx.fillRect(ox, this.y, this.w, 3);
+            if (!isHardIdle) {
+              ctx.strokeStyle = this.state === 'warning' ? '#fbbf24' : '#64748b';
+              ctx.lineWidth = 1.5;
+              ctx.beginPath();
+              ctx.moveTo(ox + this.w * 0.35, this.y);
+              ctx.lineTo(ox + this.w * 0.42, this.y + this.h * 0.5);
+              ctx.lineTo(ox + this.w * 0.37, this.y + this.h);
+              ctx.moveTo(ox + this.w * 0.7, this.y);
+              ctx.lineTo(ox + this.w * 0.65, this.y + this.h * 0.6);
+              ctx.lineTo(ox + this.w * 0.72, this.y + this.h);
+              ctx.stroke();
+            }
+          }
+          break;
+        }
+
+        case 'fake_safe': {
+          const ox = this.x + this.shakeX;
+          ctx.fillStyle = '#064e3b';
+          ctx.fillRect(ox, this.y, this.w, this.h);
+          ctx.fillStyle = this.state === 'idle' ? '#05d5aa' : '#ff2a6d';
+          ctx.fillRect(ox, this.y, this.w, 4);
+
+          ctx.font = 'bold 10px Inter, system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = this.state === 'idle' ? '#05d5aa' : '#ff2a6d';
+          ctx.fillText(this.label || 'SAFE ZONE', ox + this.w / 2, this.y - 8);
+
+          if (this.state === 'active') {
+            this.drawSpikesRow(ctx, ox + 2, this.y - 20, this.w - 4, 20, 'up', '#ff2a6d');
+          }
+          break;
+        }
+
+        case 'moving_spike': {
+          this.drawSpikesRow(ctx, this.x, this.y, this.w, this.h, this.dir, '#ff2a6d');
+          break;
+        }
+
+        case 'moving_plat':
+        case 'sliding_floor': {
+          if (this.type === 'moving_plat') {
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(this.startX + this.w / 2, this.startY + this.h / 2);
+            ctx.lineTo(this.endX + this.w / 2, this.endY + this.h / 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+          ctx.fillStyle = '#1e293b';
+          ctx.fillRect(this.x, this.y, this.w, this.h);
+          ctx.fillStyle = this.type === 'moving_plat' ? '#ffd166' : '#38bdf8';
+          ctx.fillRect(this.x, this.y, this.w, 3);
+          ctx.strokeStyle = '#334155';
+          ctx.strokeRect(this.x + 0.5, this.y + 0.5, this.w - 1, this.h - 1);
+          break;
+        }
+
+        case 'jump_trap': {
+          const zBox = this.triggerBox || {
+            x: this.x - 40,
+            y: this.y,
+            w: this.w + 80,
+            h: 180
+          };
+          if (this.diffCfg.id !== 'hard') {
+            ctx.fillStyle = 'rgba(255, 42, 109, 0.07)';
+            ctx.fillRect(zBox.x, zBox.y, zBox.w, zBox.h);
+            ctx.strokeStyle = 'rgba(255, 42, 109, 0.35)';
+            ctx.setLineDash([4, 4]);
+            ctx.strokeRect(zBox.x, zBox.y, zBox.w, zBox.h);
+            ctx.setLineDash([]);
+          }
+
+          ctx.fillStyle = '#ff2a6d';
+          ctx.fillRect(this.x, this.y, this.w, 6);
+          ctx.font = 'bold 10px Inter, system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = 'rgba(255, 180, 200, 0.85)';
+          ctx.fillText(this.label || 'NO JUMP SENSOR', this.x + this.w / 2, this.y - 6);
+
+          if (this.state === 'active') {
+            ctx.fillStyle = 'rgba(255, 42, 109, 0.88)';
+            ctx.fillRect(this.x + 4, this.y, this.w - 8, 28);
+            this.drawSpikesRow(ctx, this.x + 4, this.y + 28, this.w - 8, 22, 'down', '#ff2a6d');
+          } else {
+            this.drawSpikesRow(ctx, this.x + 4, this.y + 6, this.w - 8, 8, 'down', 'rgba(255, 42, 109, 0.6)');
+          }
+          break;
+        }
+
+        case 'falling_block': {
+          const ox = this.x + this.shakeX;
+          ctx.fillStyle = '#331832';
+          ctx.fillRect(ox, this.y, this.w, this.h - 10);
+          ctx.strokeStyle = '#ff2a6d';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(ox + 1, this.y + 1, this.w - 2, this.h - 12);
+          ctx.fillStyle = '#ffd166';
+          ctx.fillRect(ox + 8, this.y + 8, 5, 5);
+          ctx.fillRect(ox + this.w - 13, this.y + 8, 5, 5);
+          this.drawSpikesRow(ctx, ox, this.y + this.h - 10, this.w, 10, 'down', '#ff2a6d');
+          break;
+        }
+
+        case 'fake_exit': {
+          if (this.state !== 'gone') {
+            ctx.fillStyle = '#1e1b4b';
+            ctx.fillRect(this.x, this.y, this.w, this.h);
+            ctx.strokeStyle = '#fb923c';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(this.x + 1.5, this.y + 1.5, this.w - 3, this.h - 3);
+            ctx.fillStyle = 'rgba(251, 146, 60, 0.35)';
+            ctx.fillRect(this.x + 6, this.y + 6, this.w - 12, this.h - 6);
+            ctx.font = 'bold 9px Inter, system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#fed7aa';
+            ctx.fillText('EXIT?', this.x + this.w / 2, this.y - 6);
+          }
+          break;
+        }
+
+        case 'timed_spike': {
+          if (this.state === 'idle') {
+            ctx.fillStyle = 'rgba(255, 42, 109, 0.25)';
+            ctx.fillRect(this.x, this.dir === 'down' ? this.y : this.y + this.h - 3, this.w, 3);
+          } else if (this.state === 'warning') {
+            this.drawSpikesRow(
+              ctx,
+              this.x,
+              this.dir === 'down' ? this.y : this.y + this.h - 7,
+              this.w,
+              7,
+              this.dir,
+              '#ffd166'
+            );
+          } else if (this.state === 'active') {
+            this.drawSpikesRow(ctx, this.x, this.y, this.w, this.h, this.dir, '#ff2a6d');
+          }
+          break;
+        }
+      }
+
+      if (showHitboxes) {
+        const hb = this.getLethalHitbox();
+        if (hb) {
+          ctx.strokeStyle = '#00ff66';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(hb.x, hb.y, hb.w, hb.h);
+        }
+        if (this.triggerBox) {
+          ctx.strokeStyle = 'rgba(255, 209, 102, 0.45)';
+          ctx.setLineDash([3, 3]);
+          ctx.strokeRect(this.triggerBox.x, this.triggerBox.y, this.triggerBox.w, this.triggerBox.h);
+          ctx.setLineDash([]);
+        }
+      }
+
+      ctx.restore();
+    }
+  }
+
+  global.aabbOverlap = aabbOverlap;
+  global.ParticleSystem = ParticleSystem;
+  global.Trap = Trap;
+})(window);
+
+/**
+ * js/levels.js
+ * 15 Original Handcrafted Levels + 3 Difficulty Modes (Easy, Medium, Hard)
+ * for TRUST NOTHING: 15 Trials of Betrayal
+ * Logical Canvas Resolution: 960 x 540
+ */
+(function (global) {
+  'use strict';
+
+  const DIFFICULTY_MODES = {
+    easy: {
+      id: 'easy',
+      name: 'Easy',
+      badge: '🟢 EASY',
+      tagline: 'Chill & Forgiving: Checkpoints on ALL 15 levels, slower traps, visible trap hints, and extra jump grace.',
+      delayMult: 1.55,
+      speedMult: 0.76,
+      timedPeriodMult: 1.28,
+      timedActiveMult: 0.75,
+      hitboxPad: 6,
+      coyoteTime: 0.135,
+      jumpBuffer: 0.14,
+      checkpointsAllLevels: true,
+      fakeCheckpoints: false,
+      invisibleSpikes: false,
+      extraTraps: false
+    },
+    medium: {
+      id: 'medium',
+      name: 'Medium',
+      badge: '🟡 MEDIUM',
+      tagline: 'Classic Betrayal: Balanced trap speeds, subtle visual tells, and checkpoints on 9 major levels.',
+      delayMult: 1.0,
+      speedMult: 1.0,
+      timedPeriodMult: 1.0,
+      timedActiveMult: 1.0,
+      hitboxPad: 4,
+      coyoteTime: 0.095,
+      jumpBuffer: 0.11,
+      checkpointsAllLevels: false,
+      fakeCheckpoints: false,
+      invisibleSpikes: false,
+      extraTraps: false
+    },
+    hard: {
+      id: 'hard',
+      name: 'Hard',
+      badge: '🔥 HARD',
+      tagline: 'NIGHTMARE DEMON MODE: Lethal booby-trapped checkpoints (jump over flags!), Crimson Stalker Drone hunting you, 820px/s crushers (must bait & step back!), disguised collapsing floors, and mid-air back-teleporting exit doors!',
+      delayMult: 0.52,
+      speedMult: 1.32,
+      timedPeriodMult: 0.82,
+      timedActiveMult: 1.12,
+      hitboxPad: 2,
+      coyoteTime: 0.075,
+      jumpBuffer: 0.085,
+      checkpointsAllLevels: false,
+      fakeCheckpoints: true,
+      lethalCheckpoints: true,
+      stalkerDrone: true,
+      doomTimer: 22.0,
+      invisibleSpikes: true,
+      extraTraps: true
+    }
+  };
+
+  const LEVELS = [
+    // =========================================================================
+    // LEVEL 1: Trust Issues 101
+    // =========================================================================
+    {
+      id: 1,
+      name: 'Trust Issues 101',
+      subtitle: 'Welcome! The floor is definitely 100% solid. Probably.',
+      spawn: { x: 64, y: 390 },
+      checkpoint: null,
+      easyCheckpoint: { x: 475, y: 390 },
+      goal: { x: 872, y: 376, w: 36, h: 54, runaway: false, hardRunawayX: 905, hardRunawayY: 376 },
+      platforms: [
+        { x: 0, y: 430, w: 330, h: 110 },
+        { x: 430, y: 430, w: 530, h: 110 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'collapse_floor',
+          x: 330,
+          y: 430,
+          w: 100,
+          h: 24,
+          delay: 0.30,
+          trollMsg: 'Mind that hairline crack in the bridge!'
+        },
+        {
+          type: 'pop_spikes',
+          x: 620,
+          y: 414,
+          w: 42,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 565, y: 340, w: 120, h: 90 },
+          trollMsg: 'Surprise ground spikes! Watch for tiny red tips.'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 195,
+          y: 28,
+          w: 48,
+          h: 44,
+          endY: 386,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 170, y: 28, w: 90, h: 402 },
+          trollMsg: 'HARD MODE: Even Level 1 has a ceiling crusher!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 2: Mind the Gap
+    // =========================================================================
+    {
+      id: 2,
+      name: 'Mind the Gap',
+      subtitle: 'Even solid ground likes to take a step back.',
+      spawn: { x: 60, y: 390 },
+      checkpoint: null,
+      easyCheckpoint: { x: 425, y: 380 },
+      goal: { x: 882, y: 356, w: 36, h: 54, runaway: false, hardRunawayX: 912, hardRunawayY: 356 },
+      platforms: [
+        { x: 0, y: 430, w: 250, h: 110 },
+        { x: 390, y: 420, w: 255, h: 120 },
+        { x: 685, y: 410, w: 275, h: 130 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'sliding_floor',
+          x: 250,
+          y: 430,
+          w: 105,
+          h: 24,
+          endX: 215,
+          endY: 430,
+          speed: 210,
+          patrol: false,
+          triggerBox: { x: 210, y: 340, w: 140, h: 100 },
+          trollMsg: 'The ledge pulled back right as you stepped!'
+        },
+        {
+          type: 'pop_spikes',
+          x: 545,
+          y: 404,
+          w: 38,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 510, y: 330, w: 95, h: 90 },
+          trollMsg: 'Center of the island was a trap!'
+        },
+        {
+          type: 'pop_spikes',
+          x: 765,
+          y: 394,
+          w: 38,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 730, y: 320, w: 95, h: 90 },
+          trollMsg: 'Always check the landing strip before the door!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'pop_spikes',
+          x: 140,
+          y: 414,
+          w: 36,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 105, y: 340, w: 90, h: 90 },
+          trollMsg: 'HARD MODE: Hidden starter spike before the gap!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 3: Vanishing Act
+    // =========================================================================
+    {
+      id: 3,
+      name: 'Vanishing Act',
+      subtitle: 'Purple platforms have severe stage fright. Keep moving!',
+      spawn: { x: 56, y: 360 },
+      checkpoint: null,
+      easyCheckpoint: { x: 475, y: 360 },
+      goal: { x: 865, y: 346, w: 36, h: 54, runaway: false, hardRunawayX: 912, hardRunawayY: 346 },
+      platforms: [
+        { x: 0, y: 400, w: 180, h: 140 },
+        { x: 735, y: 400, w: 225, h: 140 },
+        { x: 180, y: 516, w: 555, h: 24 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'static_spikes',
+          x: 185,
+          y: 500,
+          w: 545,
+          h: 16,
+          dir: 'up',
+          trollMsg: 'Dont linger on vanishing purple platforms!'
+        },
+        {
+          type: 'vanish_plat',
+          x: 255,
+          y: 400,
+          w: 125,
+          h: 18,
+          delay: 0.48,
+          respawnTime: 1.7
+        },
+        {
+          type: 'vanish_plat',
+          x: 435,
+          y: 400,
+          w: 125,
+          h: 18,
+          delay: 0.48,
+          respawnTime: 1.7
+        },
+        {
+          type: 'collapse_floor',
+          x: 615,
+          y: 400,
+          w: 120,
+          h: 22,
+          delay: 0.34
+        },
+        {
+          type: 'pop_spikes',
+          x: 785,
+          y: 384,
+          w: 40,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 745, y: 310, w: 105, h: 90 },
+          trollMsg: 'One final pop-spike right after the chasm!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 110,
+          y: 28,
+          w: 44,
+          h: 44,
+          endY: 356,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 90, y: 28, w: 80, h: 372 },
+          trollMsg: 'HARD MODE: Ambush crusher on the launch pad!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 4: Look Up!
+    // =========================================================================
+    {
+      id: 4,
+      name: 'Look Up!',
+      subtitle: 'Heavy ceiling blocks love visitors. Checkpoint included!',
+      spawn: { x: 56, y: 390 },
+      checkpoint: { x: 470, y: 390 },
+      goal: { x: 868, y: 376, w: 36, h: 54, runaway: false, hardRunawayX: 912, hardRunawayY: 376 },
+      platforms: [
+        { x: 0, y: 430, w: 410, h: 110 },
+        { x: 440, y: 430, w: 520, h: 110 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'falling_block',
+          x: 210,
+          y: 28,
+          w: 52,
+          h: 44,
+          endY: 386,
+          delay: 0.14,
+          speed: 560,
+          triggerBox: { x: 185, y: 28, w: 95, h: 402 },
+          trollMsg: 'Watch the ceiling! Bait the crusher or sprint through.'
+        },
+        {
+          type: 'falling_block',
+          x: 325,
+          y: 28,
+          w: 52,
+          h: 44,
+          endY: 386,
+          delay: 0.14,
+          speed: 560,
+          triggerBox: { x: 300, y: 28, w: 95, h: 402 },
+          trollMsg: 'Second ceiling crusher got you!'
+        },
+        {
+          type: 'falling_block',
+          x: 590,
+          y: 28,
+          w: 54,
+          h: 44,
+          endY: 386,
+          delay: 0.13,
+          speed: 580,
+          triggerBox: { x: 565, y: 28, w: 95, h: 402 },
+          trollMsg: 'Post-checkpoint ambush from above!'
+        },
+        {
+          type: 'pop_spikes',
+          x: 735,
+          y: 414,
+          w: 42,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 690, y: 340, w: 105, h: 90 },
+          trollMsg: 'Looked up so hard you forgot to look down!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 475,
+          y: 28,
+          w: 48,
+          h: 44,
+          endY: 386,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 455, y: 28, w: 85, h: 402 },
+          trollMsg: 'HARD MODE: Ceiling crusher right over the fake checkpoint!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 5: No Jumping Allowed
+    // =========================================================================
+    {
+      id: 5,
+      name: 'No Jumping Allowed',
+      subtitle: 'Sometimes the smartest jump is no jump at all.',
+      spawn: { x: 52, y: 240 },
+      checkpoint: null,
+      easyCheckpoint: { x: 525, y: 400 },
+      goal: { x: 865, y: 386, w: 36, h: 54, runaway: false, hardRunawayX: 912, hardRunawayY: 386 },
+      platforms: [
+        { x: 0, y: 285, w: 230, h: 255 },
+        { x: 215, y: 335, w: 155, h: 205 },
+        { x: 355, y: 385, w: 165, h: 155 },
+        { x: 505, y: 440, w: 455, h: 100 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'jump_trap',
+          x: 190,
+          y: 195,
+          w: 330,
+          h: 18,
+          label: 'NO-JUMP SENSOR ZONE (WALK DOWN STEPS!)',
+          triggerBox: { x: 180, y: 195, w: 340, h: 210 },
+          trollMsg: 'Jumping sets off the ceiling spikes! Just walk down the stairs.'
+        },
+        {
+          type: 'pop_spikes',
+          x: 640,
+          y: 424,
+          w: 42,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 595, y: 350, w: 105, h: 90 },
+          trollMsg: 'Now you SHOULD jump over that spike!'
+        },
+        {
+          type: 'collapse_floor',
+          x: 745,
+          y: 440,
+          w: 85,
+          h: 22,
+          delay: 0.28,
+          trollMsg: 'Crumbly floor right before the exit!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 520,
+          y: 28,
+          w: 44,
+          h: 44,
+          endY: 396,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 505, y: 28, w: 72, h: 412 },
+          trollMsg: 'HARD MODE: Surprise ceiling crusher at the bottom of the stairs!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 6: Safe & Sound?
+    // =========================================================================
+    {
+      id: 6,
+      name: 'Safe & Sound?',
+      subtitle: 'If a platform says "SAFE ZONE", how could it possibly lie?',
+      spawn: { x: 56, y: 370 },
+      checkpoint: { x: 495, y: 340 },
+      goal: { x: 865, y: 326, w: 36, h: 54, runaway: false, hardRunawayX: 912, hardRunawayY: 326 },
+      platforms: [
+        { x: 0, y: 410, w: 215, h: 130 },
+        { x: 450, y: 380, w: 125, h: 160 },
+        { x: 765, y: 380, w: 195, h: 160 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'fake_safe',
+          x: 260,
+          y: 395,
+          w: 145,
+          h: 22,
+          delay: 0.30,
+          label: '100% SAFE ZONE',
+          trollMsg: 'The "100% SAFE ZONE" sprouted spikes! Keep moving across it!'
+        },
+        {
+          type: 'vanish_plat',
+          x: 605,
+          y: 380,
+          w: 125,
+          h: 18,
+          delay: 0.45,
+          respawnTime: 1.7
+        },
+        {
+          type: 'pop_spikes',
+          x: 795,
+          y: 364,
+          w: 36,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 755, y: 300, w: 95, h: 80 },
+          trollMsg: 'Welcome mat spikes at the final platform!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 120,
+          y: 28,
+          w: 44,
+          h: 44,
+          endY: 366,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 100, y: 28, w: 80, h: 382 },
+          trollMsg: 'HARD MODE: Ambush ceiling crusher before the Safe Zone!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 7: The Moving Target
+    // =========================================================================
+    {
+      id: 7,
+      name: 'The Moving Target',
+      subtitle: 'Ride the ferry and leap over the patrolling blades.',
+      spawn: { x: 56, y: 360 },
+      checkpoint: null,
+      easyCheckpoint: { x: 535, y: 320 },
+      goal: { x: 870, y: 306, w: 36, h: 54, runaway: false, hardRunawayX: 914, hardRunawayY: 306 },
+      platforms: [
+        { x: 0, y: 400, w: 195, h: 140 },
+        { x: 520, y: 360, w: 440, h: 180 },
+        { x: 195, y: 516, w: 325, h: 24 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'static_spikes',
+          x: 200,
+          y: 500,
+          w: 315,
+          h: 16,
+          dir: 'up',
+          trollMsg: 'Fell off the moving ferry into the spike pit!'
+        },
+        {
+          type: 'moving_plat',
+          x: 215,
+          y: 390,
+          w: 105,
+          h: 18,
+          endX: 395,
+          endY: 365,
+          speed: 135,
+          patrol: true
+        },
+        {
+          type: 'moving_spike',
+          x: 560,
+          y: 344,
+          w: 38,
+          h: 16,
+          dir: 'up',
+          endX: 775,
+          endY: 344,
+          speed: 155,
+          patrol: true,
+          trollMsg: 'Jump cleanly over the patrolling spike!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 115,
+          y: 28,
+          w: 44,
+          h: 44,
+          endY: 356,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 95, y: 28, w: 80, h: 372 },
+          trollMsg: 'HARD MODE: Dockside ceiling crusher!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 8: Door-to-Door Sales
+    // =========================================================================
+    {
+      id: 8,
+      name: 'Door-to-Door Sales',
+      subtitle: 'Not every glowing door wants to let you out.',
+      spawn: { x: 56, y: 390 },
+      checkpoint: { x: 500, y: 350 },
+      goal: {
+        x: 785,
+        y: 336,
+        w: 36,
+        h: 54,
+        runaway: true,
+        runawayX: 880,
+        runawayY: 336
+      },
+      platforms: [
+        { x: 0, y: 430, w: 395, h: 110 },
+        { x: 450, y: 390, w: 135, h: 150 },
+        { x: 640, y: 390, w: 320, h: 150 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'fake_exit',
+          x: 325,
+          y: 376,
+          w: 36,
+          h: 54,
+          trollMsg: 'DECOY EXIT! The real door is across the gap!'
+        },
+        {
+          type: 'pop_spikes',
+          x: 235,
+          y: 414,
+          w: 40,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 195, y: 340, w: 105, h: 90 }
+        },
+        {
+          type: 'pop_spikes',
+          x: 785,
+          y: 374,
+          w: 40,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 740, y: 310, w: 105, h: 80 },
+          trollMsg: 'The door ran away AND left a spike behind!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 130,
+          y: 28,
+          w: 46,
+          h: 44,
+          endY: 386,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 110, y: 28, w: 80, h: 402 },
+          trollMsg: 'HARD MODE: Early ceiling crusher ambush!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 9: Crumbly Foundations
+    // =========================================================================
+    {
+      id: 9,
+      name: 'Crumbly Foundations',
+      subtitle: 'Dont stop to admire the architecture.',
+      spawn: { x: 50, y: 380 },
+      checkpoint: { x: 515, y: 380 },
+      goal: { x: 870, y: 366, w: 36, h: 54, runaway: false, hardRunawayX: 914, hardRunawayY: 366 },
+      platforms: [
+        { x: 0, y: 420, w: 165, h: 120 },
+        { x: 475, y: 420, w: 485, h: 120 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'collapse_floor',
+          x: 165,
+          y: 420,
+          w: 100,
+          h: 22,
+          delay: 0.28
+        },
+        {
+          type: 'collapse_floor',
+          x: 268,
+          y: 420,
+          w: 100,
+          h: 22,
+          delay: 0.28
+        },
+        {
+          type: 'collapse_floor',
+          x: 371,
+          y: 420,
+          w: 104,
+          h: 22,
+          delay: 0.28
+        },
+        {
+          type: 'timed_spike',
+          x: 615,
+          y: 404,
+          w: 44,
+          h: 16,
+          dir: 'up',
+          period: 2.0,
+          activeRatio: 0.35,
+          phase: 0.0,
+          trollMsg: 'Wait for the timed spikes to retract before dashing!'
+        },
+        {
+          type: 'timed_spike',
+          x: 735,
+          y: 404,
+          w: 44,
+          h: 16,
+          dir: 'up',
+          period: 2.0,
+          activeRatio: 0.35,
+          phase: 1.0,
+          trollMsg: 'Watch the alternating rhythm on the second spike gate!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 540,
+          y: 28,
+          w: 44,
+          h: 44,
+          endY: 376,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 520, y: 28, w: 80, h: 392 },
+          trollMsg: 'HARD MODE: Crusher right on the fake checkpoint!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 10: Needle Threader
+    // =========================================================================
+    {
+      id: 10,
+      name: 'Needle Threader',
+      subtitle: 'Precision timing through the corridor of teeth.',
+      spawn: { x: 52, y: 390 },
+      checkpoint: null,
+      easyCheckpoint: { x: 605, y: 390 },
+      goal: { x: 868, y: 376, w: 36, h: 54, runaway: false, hardRunawayX: 912, hardRunawayY: 376 },
+      platforms: [
+        { x: 0, y: 430, w: 960, h: 110 },
+        { x: 220, y: 270, w: 360, h: 36 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'timed_spike',
+          x: 255,
+          y: 414,
+          w: 44,
+          h: 16,
+          dir: 'up',
+          period: 2.0,
+          activeRatio: 0.35,
+          phase: 0
+        },
+        {
+          type: 'timed_spike',
+          x: 385,
+          y: 414,
+          w: 44,
+          h: 16,
+          dir: 'up',
+          period: 2.0,
+          activeRatio: 0.35,
+          phase: 0.7
+        },
+        {
+          type: 'timed_spike',
+          x: 515,
+          y: 414,
+          w: 44,
+          h: 16,
+          dir: 'up',
+          period: 2.0,
+          activeRatio: 0.35,
+          phase: 1.4
+        },
+        {
+          type: 'moving_spike',
+          x: 800,
+          y: 414,
+          w: 36,
+          h: 16,
+          dir: 'up',
+          endX: 705,
+          endY: 414,
+          speed: 220,
+          patrol: false,
+          triggerBox: { x: 640, y: 330, w: 180, h: 100 },
+          trollMsg: 'That spike lunged straight at your ankles! Jump early!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'pop_spikes',
+          x: 135,
+          y: 414,
+          w: 36,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 100, y: 340, w: 90, h: 90 },
+          trollMsg: 'HARD MODE: Invisible spike before entering the tunnel!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 11: Ceiling Fanatic
+    // =========================================================================
+    {
+      id: 11,
+      name: 'Ceiling Fanatic',
+      subtitle: 'Gravity works overtime on both the ceiling and the floor.',
+      spawn: { x: 52, y: 380 },
+      checkpoint: { x: 485, y: 380 },
+      goal: { x: 868, y: 366, w: 36, h: 54, runaway: false, hardRunawayX: 912, hardRunawayY: 366 },
+      platforms: [
+        { x: 0, y: 420, w: 420, h: 120 },
+        { x: 455, y: 420, w: 125, h: 120 },
+        { x: 790, y: 420, w: 170, h: 120 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'falling_block',
+          x: 185,
+          y: 28,
+          w: 52,
+          h: 44,
+          endY: 376,
+          delay: 0.13,
+          speed: 580,
+          triggerBox: { x: 160, y: 28, w: 95, h: 392 }
+        },
+        {
+          type: 'falling_block',
+          x: 315,
+          y: 28,
+          w: 52,
+          h: 44,
+          endY: 376,
+          delay: 0.13,
+          speed: 580,
+          triggerBox: { x: 290, y: 28, w: 95, h: 392 }
+        },
+        {
+          type: 'vanish_plat',
+          x: 605,
+          y: 415,
+          w: 85,
+          h: 18,
+          delay: 0.45,
+          respawnTime: 1.7
+        },
+        {
+          type: 'vanish_plat',
+          x: 700,
+          y: 415,
+          w: 80,
+          h: 18,
+          delay: 0.45,
+          respawnTime: 1.7
+        },
+        {
+          type: 'pop_spikes',
+          x: 798,
+          y: 404,
+          w: 34,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 765, y: 340, w: 85, h: 80 }
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 505,
+          y: 28,
+          w: 44,
+          h: 44,
+          endY: 376,
+          delay: 0.14,
+          speed: 600,
+          triggerBox: { x: 485, y: 28, w: 80, h: 392 },
+          trollMsg: 'HARD MODE: Middle island ceiling crusher!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 12: Bridge of Betrayal
+    // =========================================================================
+    {
+      id: 12,
+      name: 'Bridge of Betrayal',
+      subtitle: 'Ride, walk off, and never trust a cozy green sign.',
+      spawn: { x: 52, y: 320 },
+      checkpoint: { x: 485, y: 380 },
+      goal: { x: 868, y: 366, w: 36, h: 54, runaway: false, hardRunawayX: 912, hardRunawayY: 366 },
+      platforms: [
+        { x: 0, y: 360, w: 205, h: 180 },
+        { x: 195, y: 420, w: 365, h: 120 },
+        { x: 785, y: 420, w: 175, h: 120 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'jump_trap',
+          x: 175,
+          y: 235,
+          w: 185,
+          h: 18,
+          label: 'NO JUMP ZONE',
+          triggerBox: { x: 165, y: 235, w: 195, h: 185 },
+          trollMsg: 'Walk off the ledge instead of jumping in the sensor zone!'
+        },
+        {
+          type: 'pop_spikes',
+          x: 380,
+          y: 404,
+          w: 42,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 340, y: 335, w: 100, h: 85 }
+        },
+        {
+          type: 'fake_safe',
+          x: 595,
+          y: 415,
+          w: 155,
+          h: 22,
+          delay: 0.30,
+          label: 'FREE REST STOP'
+        },
+        {
+          type: 'pop_spikes',
+          x: 795,
+          y: 404,
+          w: 34,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 760, y: 340, w: 85, h: 80 }
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 255,
+          y: 28,
+          w: 44,
+          h: 44,
+          endY: 376,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 235, y: 28, w: 80, h: 392 },
+          trollMsg: 'HARD MODE: Ambush ceiling crusher after the drop!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 13: Leap of Faithlessness
+    // =========================================================================
+    {
+      id: 13,
+      name: 'Leap of Faithlessness',
+      subtitle: 'Two doors, three traps, zero mercy.',
+      spawn: { x: 52, y: 380 },
+      checkpoint: { x: 450, y: 380 },
+      goal: {
+        x: 755,
+        y: 366,
+        w: 36,
+        h: 54,
+        runaway: true,
+        runawayX: 870,
+        runawayY: 366
+      },
+      platforms: [
+        { x: 0, y: 420, w: 255, h: 120 },
+        { x: 435, y: 420, w: 140, h: 120 },
+        { x: 695, y: 420, w: 265, h: 120 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'fake_exit',
+          x: 195,
+          y: 366,
+          w: 36,
+          h: 54,
+          trollMsg: 'Wait... you thought Level 13 would end in 2 seconds?!'
+        },
+        {
+          type: 'collapse_floor',
+          x: 265,
+          y: 420,
+          w: 80,
+          h: 22,
+          delay: 0.28
+        },
+        {
+          type: 'collapse_floor',
+          x: 350,
+          y: 420,
+          w: 80,
+          h: 22,
+          delay: 0.28
+        },
+        {
+          type: 'vanish_plat',
+          x: 590,
+          y: 415,
+          w: 90,
+          h: 18,
+          delay: 0.45,
+          respawnTime: 1.7
+        },
+        {
+          type: 'falling_block',
+          x: 740,
+          y: 28,
+          w: 48,
+          h: 44,
+          endY: 376,
+          delay: 0.16,
+          speed: 560,
+          triggerBox: { x: 715, y: 28, w: 90, h: 392 },
+          trollMsg: 'The door dodged the falling block—and left it for you!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'pop_spikes',
+          x: 120,
+          y: 404,
+          w: 36,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 90, y: 335, w: 85, h: 85 },
+          trollMsg: 'HARD MODE: Hidden spike before the decoy door!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 14: The Gauntlet of Lies
+    // =========================================================================
+    {
+      id: 14,
+      name: 'The Gauntlet of Lies',
+      subtitle: 'Almost at the end. Every step is a test of reflexes.',
+      spawn: { x: 48, y: 380 },
+      checkpoint: { x: 530, y: 380 },
+      goal: { x: 872, y: 366, w: 36, h: 54, runaway: false, hardRunawayX: 914, hardRunawayY: 366 },
+      platforms: [
+        { x: 0, y: 420, w: 225, h: 120 },
+        { x: 330, y: 420, w: 245, h: 120 },
+        { x: 735, y: 420, w: 225, h: 120 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'pop_spikes',
+          x: 135,
+          y: 404,
+          w: 40,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 95, y: 340, w: 100, h: 80 }
+        },
+        {
+          type: 'collapse_floor',
+          x: 225,
+          y: 420,
+          w: 105,
+          h: 22,
+          delay: 0.28
+        },
+        {
+          type: 'timed_spike',
+          x: 390,
+          y: 404,
+          w: 44,
+          h: 16,
+          dir: 'up',
+          period: 2.0,
+          activeRatio: 0.35,
+          phase: 0.2
+        },
+        {
+          type: 'moving_plat',
+          x: 585,
+          y: 415,
+          w: 90,
+          h: 18,
+          endX: 635,
+          endY: 415,
+          speed: 120,
+          patrol: true
+        },
+        {
+          type: 'falling_block',
+          x: 785,
+          y: 28,
+          w: 48,
+          h: 44,
+          endY: 376,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 760, y: 28, w: 90, h: 392 }
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'pop_spikes',
+          x: 465,
+          y: 404,
+          w: 34,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 438, y: 340, w: 75, h: 80 },
+          trollMsg: 'HARD MODE: Invisible spike right after the timed gate!'
+        }
+      ]
+    },
+
+    // =========================================================================
+    // LEVEL 15: Grandmaster of Paranoia
+    // =========================================================================
+    {
+      id: 15,
+      name: 'Grandmaster of Paranoia',
+      subtitle: 'Final Trial! Everything you have learned in one diabolical run.',
+      spawn: { x: 46, y: 330 },
+      checkpoint: { x: 412, y: 380 },
+      goal: {
+        x: 785,
+        y: 366,
+        w: 36,
+        h: 54,
+        runaway: true,
+        runawayX: 880,
+        runawayY: 366
+      },
+      platforms: [
+        { x: 0, y: 370, w: 175, h: 170 },
+        { x: 165, y: 420, w: 135, h: 120 },
+        { x: 400, y: 420, w: 180, h: 120 },
+        { x: 745, y: 420, w: 215, h: 120 },
+        { x: 0, y: 0, w: 960, h: 28 }
+      ],
+      traps: [
+        {
+          type: 'jump_trap',
+          x: 140,
+          y: 245,
+          w: 140,
+          h: 18,
+          label: 'NO JUMP',
+          triggerBox: { x: 130, y: 245, w: 155, h: 175 },
+          trollMsg: 'Rule #1 of the Finale: walk off the first step!'
+        },
+        {
+          type: 'collapse_floor',
+          x: 300,
+          y: 420,
+          w: 95,
+          h: 22,
+          delay: 0.36
+        },
+        {
+          type: 'falling_block',
+          x: 472,
+          y: 28,
+          w: 44,
+          h: 44,
+          endY: 376,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 458, y: 28, w: 68, h: 392 }
+        },
+        {
+          type: 'fake_exit',
+          x: 540,
+          y: 366,
+          w: 36,
+          h: 54,
+          trollMsg: 'SO CLOSE! Just two vanishing pads left to the REAL exit!'
+        },
+        {
+          type: 'vanish_plat',
+          x: 590,
+          y: 415,
+          w: 75,
+          h: 18,
+          delay: 0.45,
+          respawnTime: 1.6
+        },
+        {
+          type: 'vanish_plat',
+          x: 670,
+          y: 415,
+          w: 70,
+          h: 18,
+          delay: 0.45,
+          respawnTime: 1.6
+        },
+        {
+          type: 'pop_spikes',
+          x: 780,
+          y: 404,
+          w: 38,
+          h: 16,
+          dir: 'up',
+          delay: 0.08,
+          triggerBox: { x: 745, y: 340, w: 95, h: 80 },
+          trollMsg: 'One final runaway exit fake-out! Hop the spike to claim victory!'
+        }
+      ],
+      hardTraps: [
+        {
+          type: 'falling_block',
+          x: 215,
+          y: 28,
+          w: 42,
+          h: 44,
+          endY: 376,
+          delay: 0.14,
+          speed: 580,
+          triggerBox: { x: 198, y: 28, w: 75, h: 392 },
+          trollMsg: 'HARD MODE FINALE: Ambush crusher right after the no-jump drop!'
+        }
+      ]
+    }
+  ];
+
+  global.DIFFICULTY_MODES = DIFFICULTY_MODES;
+  global.LEVELS = LEVELS;
+})(window);
+
+/**
+ * js/player.js
+ * Responsive 2D Platformer Player Physics, Sub-Stepped Collision Resolution,
+ * Difficulty-Aware Coyote Time & Jump Buffering, and Expressive Rendering.
+ */
+(function (global) {
+  'use strict';
+
+  class Player {
+    constructor(x, y) {
+      this.w = 24;
+      this.h = 28;
+      this.coyoteWindow = 0.095;
+      this.jumpBufferWindow = 0.11;
+      this.reset(x, y);
+    }
+
+    setDifficultyParams(diffCfg) {
+      if (!diffCfg) return;
+      this.coyoteWindow = diffCfg.coyoteTime || 0.095;
+      this.jumpBufferWindow = diffCfg.jumpBuffer || 0.11;
+    }
+
+    reset(x, y) {
+      this.x = x || 60;
+      this.y = y || 400;
+      this.vx = 0;
+      this.vy = 0;
+      this.maxSpeed = 255;
+      this.accel = 2200;
+      this.friction = 1950;
+      this.gravity = 1350;
+      this.jumpForce = -525;
+      this.maxFall = 720;
+
+      this.onGround = false;
+      this.coyoteTimer = 0;
+      this.jumpBufferTimer = 0;
+      this.justJumped = false;
+      this.facing = 1;
+      this.dead = false;
+      this.won = false;
+      this.deathReason = '';
+
+      this.scaleX = 1;
+      this.scaleY = 1;
+      this.runCycle = 0;
+      this.groundTrap = null;
+    }
+
+    update(dt, input, solids, audio, particles) {
+      this.justJumped = false;
+      if (this.dead || this.won) return;
+
+      if (this.onGround && this.groundTrap) {
+        this.x += this.groundTrap.dx || 0;
+        this.y += this.groundTrap.dy || 0;
+      }
+
+      const moveDir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+      if (moveDir !== 0) {
+        this.facing = moveDir;
+        this.vx += moveDir * this.accel * dt;
+        if (this.vx > this.maxSpeed) this.vx = this.maxSpeed;
+        if (this.vx < -this.maxSpeed) this.vx = -this.maxSpeed;
+        this.runCycle += dt * 14;
+      } else {
+        if (this.vx > 0) {
+          this.vx = Math.max(0, this.vx - this.friction * dt);
+        } else if (this.vx < 0) {
+          this.vx = Math.min(0, this.vx + this.friction * dt);
+        }
+        this.runCycle = 0;
+      }
+
+      if (this.onGround) {
+        this.coyoteTimer = this.coyoteWindow;
+      } else {
+        this.coyoteTimer = Math.max(0, this.coyoteTimer - dt);
+      }
+
+      if (input.jumpPressed) {
+        this.jumpBufferTimer = this.jumpBufferWindow;
+      } else {
+        this.jumpBufferTimer = Math.max(0, this.jumpBufferTimer - dt);
+      }
+
+      if (this.jumpBufferTimer > 0 && this.coyoteTimer > 0) {
+        this.vy = this.jumpForce;
+        this.onGround = false;
+        this.coyoteTimer = 0;
+        this.jumpBufferTimer = 0;
+        this.justJumped = true;
+        this.groundTrap = null;
+        this.scaleX = 0.76;
+        this.scaleY = 1.28;
+        if (audio) audio.playJump();
+        if (particles) {
+          particles.emitBurst(this.x + this.w / 2, this.y + this.h, '#94a3b8', 6, 20, 75, 2, 4, 0.2);
+        }
+      }
+
+      if (!input.jumpHeld && this.vy < -180) {
+        this.vy *= 0.58;
+      }
+
+      this.vy = Math.min(this.maxFall, this.vy + this.gravity * dt);
+
+      const wasOnGround = this.onGround;
+      this.onGround = false;
+      this.groundTrap = null;
+
+      this.x += this.vx * dt;
+      if (this.x < 0) {
+        this.x = 0;
+        this.vx = 0;
+      }
+      if (this.x + this.w > 960) {
+        this.x = 960 - this.w;
+        this.vx = 0;
+      }
+
+      for (let i = 0; i < solids.length; i++) {
+        const s = solids[i];
+        if (global.aabbOverlap(this, s)) {
+          const overlapLeft = (this.x + this.w) - s.x;
+          const overlapRight = (s.x + s.w) - this.x;
+          if (overlapLeft < overlapRight) {
+            this.x = s.x - this.w;
+          } else {
+            this.x = s.x + s.w;
+          }
+          this.vx = 0;
+        }
+      }
+
+      this.y += this.vy * dt;
+
+      for (let i = 0; i < solids.length; i++) {
+        const s = solids[i];
+        if (global.aabbOverlap(this, s)) {
+          const overlapTop = (this.y + this.h) - s.y;
+          const overlapBottom = (s.y + s.h) - this.y;
+          if (this.vy >= 0 && overlapTop <= overlapBottom + 6) {
+            this.y = s.y - this.h;
+            if (!wasOnGround && this.vy > 180) {
+              this.scaleX = 1.24;
+              this.scaleY = 0.78;
+              if (audio) audio.playLand();
+            }
+            this.vy = 0;
+            this.onGround = true;
+            if (s.trapRef) {
+              this.groundTrap = s.trapRef;
+              s.trapRef.onPlayerLanded(this, audio, particles);
+            }
+          } else if (this.vy < 0 && overlapBottom < overlapTop) {
+            this.y = s.y + s.h;
+            this.vy = 0;
+          } else {
+            if (overlapTop < overlapBottom) {
+              this.y = s.y - this.h;
+              this.vy = 0;
+              this.onGround = true;
+            } else {
+              this.y = s.y + s.h;
+              this.vy = 10;
+            }
+          }
+        }
+      }
+
+      this.scaleX += (1 - this.scaleX) * Math.min(1, dt * 14);
+      this.scaleY += (1 - this.scaleY) * Math.min(1, dt * 14);
+    }
+
+    render(ctx, showHitboxes, difficulty) {
+      if (this.dead) return;
+
+      ctx.save();
+      const cx = this.x + this.w / 2;
+      const by = this.y + this.h;
+      ctx.translate(cx, by);
+      ctx.scale(this.scaleX, this.scaleY);
+
+      const isHard = difficulty === 'hard';
+      ctx.shadowColor = isHard ? 'rgba(255, 42, 109, 0.55)' : 'rgba(0, 240, 255, 0.45)';
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = isHard ? '#38bdf8' : '#00f0ff';
+      const rw = this.w;
+      const rh = this.h;
+      const rx = -rw / 2;
+      const ry = -rh;
+
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(rx, ry, rw, rh, 6) : ctx.rect(rx, ry, rw, rh);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = isHard ? '#fda4af' : '#a5f3fc';
+      ctx.fillRect(rx + 3, ry + 2, rw - 6, 3);
+
+      const eyeOffset = this.facing * 3;
+      ctx.fillStyle = '#0b0c14';
+      ctx.fillRect(-6 + eyeOffset, ry + 8, 4, 6);
+      ctx.fillRect(2 + eyeOffset, ry + 8, 4, 6);
+
+      // Fiercer angled headband/brow in Hard mode
+      ctx.fillStyle = isHard ? '#ff2a6d' : '#0891b2';
+      ctx.fillRect(-8 + eyeOffset, ry + 5, 16, 2.5);
+
+      const footBob = Math.sin(this.runCycle) * 2.5;
+      ctx.fillStyle = '#0891b2';
+      ctx.fillRect(-8, -3 + (this.onGround ? footBob : -2), 5, 3);
+      ctx.fillRect(3, -3 - (this.onGround ? footBob : -2), 5, 3);
+
+      ctx.restore();
+
+      if (showHitboxes) {
+        ctx.save();
+        ctx.strokeStyle = '#00f0ff';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(this.x, this.y, this.w, this.h);
+        ctx.restore();
+      }
+    }
+  }
+
+  global.Player = Player;
+})(window);
+
+/**
+ * js/ui.js
+ * Manages HUD, 3 Difficulty Mode Selectors (Easy, Medium, Hard),
+ * Main Menu, Level Selection, Pause Menu, Settings, and Victory Screen.
+ */
+(function (global) {
+  'use strict';
+
+  class UIManager {
+    constructor(game, audio) {
+      this.game = game;
+      this.audio = audio;
+      this.guideDismissed = false;
+      this.cacheElements();
+      this.bindEvents();
+      this.syncSettingsUI();
+      this.syncDifficultyUI();
+      this.updateHUD();
+      this.updateMenuStats();
+    }
+
+    cacheElements() {
+      this.elHudLevel = document.getElementById('hud-level');
+      this.elHudSubtitle = document.getElementById('hud-subtitle');
+      this.elHudDeaths = document.getElementById('hud-deaths');
+      this.elHudTime = document.getElementById('hud-time');
+      this.elHudProgress = document.getElementById('hud-progress-fill');
+      this.elBtnMute = document.getElementById('btn-hud-mute');
+      this.elBtnHudDiff = document.getElementById('btn-hud-difficulty');
+
+      this.elModeEasy = document.getElementById('btn-mode-easy');
+      this.elModeMedium = document.getElementById('btn-mode-medium');
+      this.elModeHard = document.getElementById('btn-mode-hard');
+      this.elModeDesc = document.getElementById('mode-desc-text');
+
+      this.elControlBanner = document.getElementById('control-guide-banner');
+      this.elDeathBanner = document.getElementById('death-banner');
+      this.elDeathReason = document.getElementById('death-reason-text');
+      this.elToast = document.getElementById('toast-banner');
+
+      this.elMenuOverlay = document.getElementById('menu-overlay');
+      this.elLevelModal = document.getElementById('level-select-modal');
+      this.elLevelGrid = document.getElementById('level-grid');
+      this.elPauseModal = document.getElementById('pause-modal');
+      this.elSettingsModal = document.getElementById('settings-modal');
+      this.elControlsModal = document.getElementById('controls-modal');
+      this.elVictoryModal = document.getElementById('victory-modal');
+
+      this.elStatUnlocked = document.getElementById('stat-unlocked');
+      this.elStatCleared = document.getElementById('stat-cleared');
+      this.elStatDeaths = document.getElementById('stat-deaths');
+
+      this.elToggleMute = document.getElementById('toggle-mute');
+      this.elSliderBgm = document.getElementById('slider-bgm');
+      this.elSliderSfx = document.getElementById('slider-sfx');
+      this.elValBgm = document.getElementById('val-bgm');
+      this.elValSfx = document.getElementById('val-sfx');
+      this.elToggleShake = document.getElementById('toggle-shake');
+      this.elToggleHitboxes = document.getElementById('toggle-hitboxes');
+      this.elToggleUnlockAll = document.getElementById('toggle-unlock-all');
+      this.elResetConfirmBox = document.getElementById('reset-confirm-box');
+
+      this.elVictoryDeaths = document.getElementById('victory-deaths');
+      this.elVictoryTime = document.getElementById('victory-time');
+      this.elVictoryBreakdown = document.getElementById('victory-breakdown');
+    }
+
+    bindEvents() {
+      const bindClick = (id, fn) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.audio.playClick();
+            fn();
+          });
+        }
+      };
+
+      // Difficulty Mode buttons on Main Menu & HUD
+      bindClick('btn-mode-easy', () => {
+        this.game.setDifficulty('easy');
+      });
+      bindClick('btn-mode-medium', () => {
+        this.game.setDifficulty('medium');
+      });
+      bindClick('btn-mode-hard', () => {
+        this.game.setDifficulty('hard');
+      });
+      bindClick('btn-hud-difficulty', () => {
+        this.game.cycleDifficulty();
+      });
+
+      // Main Menu buttons
+      bindClick('btn-play', () => {
+        this.hideAllModals();
+        this.game.startOrContinueGame();
+      });
+      bindClick('btn-level-select', () => {
+        this.openLevelSelect();
+      });
+      bindClick('btn-controls', () => {
+        this.openControlsModal();
+      });
+      bindClick('btn-settings', () => {
+        this.openSettingsModal();
+      });
+
+      // HUD buttons
+      bindClick('btn-hud-restart', () => {
+        this.game.restartLevel();
+      });
+      bindClick('btn-hud-pause', () => {
+        this.game.togglePause();
+      });
+      bindClick('btn-hud-mute', () => {
+        this.audio.toggleMute();
+        this.syncSettingsUI();
+      });
+      bindClick('btn-hud-levels', () => {
+        this.openLevelSelect();
+      });
+      bindClick('btn-hud-menu', () => {
+        this.game.returnToMainMenu();
+      });
+      bindClick('btn-dismiss-guide', () => {
+        this.guideDismissed = true;
+        if (this.elControlBanner) {
+          this.elControlBanner.classList.add('hidden');
+        }
+      });
+      bindClick('btn-death-retry', () => {
+        this.game.restartLevel();
+      });
+
+      // Pause Modal buttons
+      bindClick('btn-resume', () => {
+        this.game.resumeGame();
+      });
+      bindClick('btn-pause-restart', () => {
+        this.hideAllModals();
+        this.game.restartLevel();
+      });
+      bindClick('btn-pause-levels', () => {
+        this.openLevelSelect();
+      });
+      bindClick('btn-pause-settings', () => {
+        this.openSettingsModal();
+      });
+      bindClick('btn-pause-menu', () => {
+        this.game.returnToMainMenu();
+      });
+
+      bindClick('btn-close-levels', () => {
+        if (this.elLevelModal) this.elLevelModal.classList.add('hidden');
+        if (this.game.state === 'PAUSED') {
+          this.showPauseModal();
+        }
+      });
+
+      bindClick('btn-close-controls', () => {
+        if (this.elControlsModal) this.elControlsModal.classList.add('hidden');
+      });
+
+      bindClick('btn-close-settings', () => {
+        if (this.elSettingsModal) this.elSettingsModal.classList.add('hidden');
+        if (this.game.state === 'PAUSED') {
+          this.showPauseModal();
+        }
+      });
+
+      if (this.elToggleMute) {
+        this.elToggleMute.addEventListener('change', (e) => {
+          this.audio.setMuted(e.target.checked);
+          this.syncSettingsUI();
+        });
+      }
+
+      if (this.elSliderBgm) {
+        this.elSliderBgm.addEventListener('input', (e) => {
+          const val = parseInt(e.target.value, 10) / 100;
+          this.audio.setBGMVolume(val);
+          if (this.elValBgm) this.elValBgm.textContent = e.target.value + '%';
+        });
+      }
+
+      if (this.elSliderSfx) {
+        this.elSliderSfx.addEventListener('input', (e) => {
+          const val = parseInt(e.target.value, 10) / 100;
+          this.audio.setSFXVolume(val);
+          if (this.elValSfx) this.elValSfx.textContent = e.target.value + '%';
+        });
+      }
+
+      if (this.elToggleShake) {
+        this.elToggleShake.addEventListener('change', (e) => {
+          this.game.settings.screenShake = e.target.checked;
+          this.game.saveProgress();
+        });
+      }
+
+      if (this.elToggleHitboxes) {
+        this.elToggleHitboxes.addEventListener('change', (e) => {
+          this.game.settings.showHitboxes = e.target.checked;
+          this.game.saveProgress();
+        });
+      }
+
+      if (this.elToggleUnlockAll) {
+        this.elToggleUnlockAll.addEventListener('change', (e) => {
+          this.game.settings.unlockAll = e.target.checked;
+          this.game.saveProgress();
+          this.updateMenuStats();
+        });
+      }
+
+      bindClick('btn-reset-save', () => {
+        if (this.elResetConfirmBox) {
+          this.elResetConfirmBox.classList.remove('hidden');
+        }
+      });
+
+      bindClick('btn-confirm-reset', () => {
+        this.game.resetAllProgress();
+        if (this.elResetConfirmBox) {
+          this.elResetConfirmBox.classList.add('hidden');
+        }
+        this.syncSettingsUI();
+        this.syncDifficultyUI();
+        this.updateMenuStats();
+        this.updateHUD();
+        this.showToast('All progress and statistics have been reset.');
+      });
+
+      bindClick('btn-cancel-reset', () => {
+        if (this.elResetConfirmBox) {
+          this.elResetConfirmBox.classList.add('hidden');
+        }
+      });
+
+      bindClick('btn-victory-replay', () => {
+        this.hideAllModals();
+        this.game.loadLevel(0);
+        this.game.state = 'PLAYING';
+      });
+      bindClick('btn-victory-levels', () => {
+        this.elVictoryModal.classList.add('hidden');
+        this.openLevelSelect();
+      });
+      bindClick('btn-victory-menu', () => {
+        this.game.returnToMainMenu();
+      });
+    }
+
+    syncDifficultyUI() {
+      const mode = this.game.difficulty;
+      const cfg = this.game.getDifficultyConfig();
+
+      const mapping = [
+        [this.elModeEasy, 'easy'],
+        [this.elModeMedium, 'medium'],
+        [this.elModeHard, 'hard']
+      ];
+      for (let i = 0; i < mapping.length; i++) {
+        const el = mapping[i][0];
+        const m = mapping[i][1];
+        if (el) {
+          if (mode === m) {
+            el.classList.add('active-mode');
+          } else {
+            el.classList.remove('active-mode');
+          }
+        }
+      }
+
+      if (this.elModeDesc && cfg) {
+        this.elModeDesc.textContent = cfg.tagline;
+      }
+
+      if (this.elBtnHudDiff && cfg) {
+        this.elBtnHudDiff.textContent = cfg.badge;
+        this.elBtnHudDiff.className = 'btn mode-badge-' + mode;
+      }
+    }
+
+    syncSettingsUI() {
+      if (this.elToggleMute) {
+        this.elToggleMute.checked = this.audio.isMuted;
+      }
+      if (this.elBtnMute) {
+        this.elBtnMute.textContent = this.audio.isMuted ? '🔇 Muted' : '🔊 Audio';
+        this.elBtnMute.setAttribute('aria-pressed', this.audio.isMuted ? 'true' : 'false');
+      }
+      const bgmPct = Math.round(this.audio.bgmVolume * 100);
+      const sfxPct = Math.round(this.audio.sfxVolume * 100);
+      if (this.elSliderBgm) this.elSliderBgm.value = String(bgmPct);
+      if (this.elValBgm) this.elValBgm.textContent = bgmPct + '%';
+      if (this.elSliderSfx) this.elSliderSfx.value = String(sfxPct);
+      if (this.elValSfx) this.elValSfx.textContent = sfxPct + '%';
+
+      if (this.elToggleShake) this.elToggleShake.checked = !!this.game.settings.screenShake;
+      if (this.elToggleHitboxes) this.elToggleHitboxes.checked = !!this.game.settings.showHitboxes;
+      if (this.elToggleUnlockAll) this.elToggleUnlockAll.checked = !!this.game.settings.unlockAll;
+    }
+
+    formatTime(seconds) {
+      const s = Math.max(0, Math.floor(seconds || 0));
+      const mins = Math.floor(s / 60);
+      const secs = s % 60;
+      return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    }
+
+    updateHUD() {
+      const lvl = this.game.currentLevelData;
+      const total = global.LEVELS.length;
+      const cfg = this.game.getDifficultyConfig();
+      if (lvl && this.elHudLevel) {
+        this.elHudLevel.textContent = 'LEVEL ' + lvl.id + ' / ' + total + ' — ' + lvl.name + ' [' + cfg.name.toUpperCase() + ']';
+      }
+      if (lvl && this.elHudSubtitle) {
+        this.elHudSubtitle.textContent = lvl.subtitle || '';
+      }
+      if (this.elHudDeaths) {
+        this.elHudDeaths.textContent = String(this.game.totalDeaths);
+      }
+      if (this.elHudTime) {
+        this.elHudTime.textContent = this.formatTime(this.game.runTime);
+      }
+      if (this.elHudProgress && lvl) {
+        const pct = Math.round((lvl.id / total) * 100);
+        this.elHudProgress.style.width = pct + '%';
+      }
+    }
+
+    updateMenuStats() {
+      const total = global.LEVELS.length;
+      const unlocked = this.game.settings.unlockAll ? total : Math.min(total, this.game.unlockedLevel);
+      const cleared = Object.keys(this.game.completedLevels || {}).length;
+      const cfg = this.game.getDifficultyConfig();
+      if (this.elStatUnlocked) this.elStatUnlocked.textContent = unlocked + ' / ' + total;
+      if (this.elStatCleared) this.elStatCleared.textContent = cleared + ' / ' + total;
+      if (this.elStatDeaths) this.elStatDeaths.textContent = String(this.game.totalDeaths);
+
+      const btnPlay = document.getElementById('btn-play');
+      if (btnPlay) {
+        btnPlay.textContent = this.game.unlockedLevel > 1
+          ? '▶ Continue Level ' + Math.min(total, this.game.unlockedLevel) + ' (' + cfg.name + ')'
+          : '▶ Start Game (' + cfg.name + ' Mode)';
+      }
+    }
+
+    showMainMenu() {
+      this.hideAllModals();
+      this.syncDifficultyUI();
+      this.updateMenuStats();
+      if (this.elMenuOverlay) this.elMenuOverlay.classList.remove('hidden');
+    }
+
+    showPauseModal() {
+      if (this.elPauseModal) this.elPauseModal.classList.remove('hidden');
+    }
+
+    openLevelSelect() {
+      if (this.elPauseModal) this.elPauseModal.classList.add('hidden');
+      this.renderLevelGrid();
+      if (this.elLevelModal) this.elLevelModal.classList.remove('hidden');
+    }
+
+    openSettingsModal() {
+      if (this.elPauseModal) this.elPauseModal.classList.add('hidden');
+      this.syncSettingsUI();
+      if (this.elResetConfirmBox) this.elResetConfirmBox.classList.add('hidden');
+      if (this.elSettingsModal) this.elSettingsModal.classList.remove('hidden');
+    }
+
+    openControlsModal() {
+      if (this.elControlsModal) this.elControlsModal.classList.remove('hidden');
+    }
+
+    hideAllModals() {
+      const modals = [
+        this.elMenuOverlay,
+        this.elLevelModal,
+        this.elPauseModal,
+        this.elSettingsModal,
+        this.elControlsModal,
+        this.elVictoryModal
+      ];
+      for (let i = 0; i < modals.length; i++) {
+        if (modals[i]) modals[i].classList.add('hidden');
+      }
+    }
+
+    showControlGuideIfNeeded() {
+      if (!this.guideDismissed && this.elControlBanner) {
+        this.elControlBanner.classList.remove('hidden');
+      }
+    }
+
+    showDeathBanner(reason) {
+      if (this.elDeathReason) {
+        this.elDeathReason.textContent = reason || 'You fell for a classic trap!';
+      }
+      if (this.elDeathBanner) {
+        this.elDeathBanner.classList.remove('hidden');
+      }
+    }
+
+    hideDeathBanner() {
+      if (this.elDeathBanner) {
+        this.elDeathBanner.classList.add('hidden');
+      }
+    }
+
+    showToast(msg) {
+      if (!this.elToast) return;
+      this.elToast.textContent = msg;
+      this.elToast.classList.remove('hidden');
+      clearTimeout(this.toastTimer);
+      this.toastTimer = setTimeout(() => {
+        this.elToast.classList.add('hidden');
+      }, 2200);
+    }
+
+    renderLevelGrid() {
+      if (!this.elLevelGrid) return;
+      this.elLevelGrid.innerHTML = '';
+
+      const levels = global.LEVELS;
+      const diffCfg = this.game.getDifficultyConfig();
+      for (let i = 0; i < levels.length; i++) {
+        const lvl = levels[i];
+        const isUnlocked = this.game.settings.unlockAll || lvl.id <= this.game.unlockedLevel;
+        const stats = this.game.completedLevels[lvl.id];
+
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'level-card' + (isUnlocked ? ' unlocked' : ' locked') + (stats ? ' completed' : '');
+        card.disabled = !isUnlocked;
+
+        const statusBadge = stats
+          ? '★ Cleared (' + stats.bestDeaths + ' 💀)'
+          : isUnlocked
+          ? 'Unlocked'
+          : '🔒 Locked';
+
+        const cpText = diffCfg.fakeCheckpoints
+          ? '💀 No Checkpoints (Hard)'
+          : (lvl.checkpoint || diffCfg.checkpointsAllLevels)
+          ? '🚩 Has Checkpoint'
+          : '⚡ Single Sprint';
+
+        card.innerHTML =
+          '<div class="level-card-top">' +
+            '<span class="level-num">LVL ' + lvl.id + '</span>' +
+            '<span class="level-status">' + statusBadge + '</span>' +
+          '</div>' +
+          '<div class="level-title">' + lvl.name + '</div>' +
+          '<div class="level-checkpoint-tag">' + cpText + '</div>';
+
+        if (isUnlocked) {
+          card.addEventListener('click', () => {
+            this.audio.playClick();
+            this.hideAllModals();
+            this.game.loadLevel(i);
+            this.game.state = 'PLAYING';
+            this.showControlGuideIfNeeded();
+          });
+        }
+
+        this.elLevelGrid.appendChild(card);
+      }
+    }
+
+    showVictoryScreen() {
+      this.hideAllModals();
+      if (this.elVictoryDeaths) {
+        this.elVictoryDeaths.textContent = String(this.game.totalDeaths);
+      }
+      if (this.elVictoryTime) {
+        this.elVictoryTime.textContent = this.formatTime(this.game.runTime);
+      }
+      if (this.elVictoryBreakdown) {
+        this.elVictoryBreakdown.innerHTML = '';
+        for (let i = 0; i < global.LEVELS.length; i++) {
+          const lvl = global.LEVELS[i];
+          const st = this.game.completedLevels[lvl.id];
+          const row = document.createElement('div');
+          row.className = 'victory-row';
+          row.innerHTML =
+            '<span>Level ' + lvl.id + ': ' + lvl.name + '</span>' +
+            '<span>' + (st ? st.bestDeaths + ' deaths' : 'Cleared') + '</span>';
+          this.elVictoryBreakdown.appendChild(row);
+        }
+      }
+      if (this.elVictoryModal) {
+        this.elVictoryModal.classList.remove('hidden');
+      }
+    }
+  }
+
+  global.UIManager = UIManager;
+})(window);
+
+/**
+ * js/game.js
+ * Core Game Loop, 3 Difficulty Modes (Easy, Medium, Hard), State Machine,
+ * Collision/Trap Orchestration, Checkpoints, Parallax Rendering, and Save System.
+ */
+(function (global) {
+  'use strict';
+
+  class Game {
+    constructor(canvas, audio) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.audio = audio;
+
+      this.width = 960;
+      this.height = 540;
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
+
+      this.state = 'MENU';
+      this.difficulty = 'hard'; // 'easy', 'medium', 'hard'
+      this.currentLevelIndex = 0;
+      this.currentLevelData = null;
+      this.unlockedLevel = 1;
+      this.totalDeaths = 0;
+      this.levelDeaths = 0;
+      this.runTime = 0;
+      this.completedLevels = {};
+
+      this.settings = {
+        screenShake: true,
+        showHitboxes: false,
+        unlockAll: false
+      };
+
+      this.input = {
+        left: false,
+        right: false,
+        jumpHeld: false,
+        jumpPressed: false
+      };
+
+      this.particles = new global.ParticleSystem();
+      this.player = new global.Player(60, 390);
+      this.traps = [];
+      this.platforms = [];
+      this.checkpoint = null;
+      this.checkpointActivated = false;
+      this.checkpointBetrayed = false;
+      this.goal = null;
+
+      this.respawnTimer = 0;
+      this.transitionTimer = 0;
+      this.shakeTime = 0;
+      this.shakeMagnitude = 0;
+      this.bgStars = this.createParallaxStars();
+
+      this.loadProgress();
+      this.loadLevel(Math.min(global.LEVELS.length - 1, this.unlockedLevel - 1));
+    }
+
+    setUI(ui) {
+      this.ui = ui;
+    }
+
+    getDifficultyConfig() {
+      return global.DIFFICULTY_MODES[this.difficulty] || global.DIFFICULTY_MODES.medium;
+    }
+
+    setDifficulty(mode) {
+      if (!global.DIFFICULTY_MODES[mode]) return;
+      this.difficulty = mode;
+      this.saveProgress();
+      this.loadLevel(this.currentLevelIndex);
+      if (this.ui) {
+        this.ui.syncDifficultyUI();
+        this.ui.updateHUD();
+        this.ui.updateMenuStats();
+      }
+    }
+
+    cycleDifficulty() {
+      const order = ['easy', 'medium', 'hard'];
+      const nextIdx = (order.indexOf(this.difficulty) + 1) % order.length;
+      this.setDifficulty(order[nextIdx]);
+      if (this.ui) {
+        const cfg = this.getDifficultyConfig();
+        this.ui.showToast('Mode switched to ' + cfg.badge);
+      }
+    }
+
+    createParallaxStars() {
+      const stars = [];
+      for (let i = 0; i < 48; i++) {
+        stars.push({
+          x: (i * 73) % 960,
+          y: (i * 41) % 440,
+          r: (i % 3) + 1,
+          speed: 6 + (i % 4) * 5,
+          alpha: 0.15 + (i % 5) * 0.08
+        });
+      }
+      return stars;
+    }
+
+    loadProgress() {
+      try {
+        const raw = localStorage.getItem('trust_nothing_save_v2');
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data.difficulty && global.DIFFICULTY_MODES[data.difficulty]) {
+            this.difficulty = data.difficulty;
+          }
+          if (typeof data.unlockedLevel === 'number') {
+            this.unlockedLevel = Math.max(1, Math.min(global.LEVELS.length, data.unlockedLevel));
+          }
+          if (typeof data.totalDeaths === 'number') {
+            this.totalDeaths = Math.max(0, data.totalDeaths);
+          }
+          if (typeof data.runTime === 'number') {
+            this.runTime = Math.max(0, data.runTime);
+          }
+          if (data.completedLevels && typeof data.completedLevels === 'object') {
+            this.completedLevels = data.completedLevels;
+          }
+          if (data.settings && typeof data.settings === 'object') {
+            if (typeof data.settings.screenShake === 'boolean') this.settings.screenShake = data.settings.screenShake;
+            if (typeof data.settings.showHitboxes === 'boolean') this.settings.showHitboxes = data.settings.showHitboxes;
+            if (typeof data.settings.unlockAll === 'boolean') this.settings.unlockAll = data.settings.unlockAll;
+          }
+        }
+      } catch (e) {
+        // Ignore storage errors
+      }
+    }
+
+    saveProgress() {
+      try {
+        localStorage.setItem('trust_nothing_save_v2', JSON.stringify({
+          difficulty: this.difficulty,
+          unlockedLevel: this.unlockedLevel,
+          totalDeaths: this.totalDeaths,
+          runTime: this.runTime,
+          completedLevels: this.completedLevels,
+          settings: this.settings
+        }));
+      } catch (e) {
+        // Ignore storage errors
+      }
+    }
+
+    resetAllProgress() {
+      this.unlockedLevel = 1;
+      this.totalDeaths = 0;
+      this.levelDeaths = 0;
+      this.runTime = 0;
+      this.completedLevels = {};
+      this.settings.unlockAll = false;
+      this.saveProgress();
+      this.loadLevel(0);
+    }
+
+    loadLevel(index) {
+      const idx = Math.max(0, Math.min(global.LEVELS.length - 1, index));
+      this.currentLevelIndex = idx;
+      const lvl = global.LEVELS[idx];
+      this.currentLevelData = lvl;
+      this.levelDeaths = 0;
+      this.checkpointActivated = false;
+      this.checkpointBetrayed = false;
+
+      const diffCfg = this.getDifficultyConfig();
+      this.player.setDifficultyParams(diffCfg);
+
+      this.platforms = lvl.platforms.map((p) => ({ x: p.x, y: p.y, w: p.w, h: p.h }));
+
+      // Combine base traps + Hard Mode extra ambush traps when in Hard Mode
+      const trapDefs = lvl.traps.slice();
+      if (diffCfg.extraTraps && Array.isArray(lvl.hardTraps)) {
+        for (let i = 0; i < lvl.hardTraps.length; i++) {
+          trapDefs.push(lvl.hardTraps[i]);
+        }
+      }
+      this.traps = trapDefs.map((t) => new global.Trap(t, diffCfg));
+
+      // Checkpoint logic per difficulty:
+      // Easy: every level gets a checkpoint (lvl.checkpoint or lvl.easyCheckpoint)
+      // Medium: standard lvl.checkpoint
+      // Hard: lvl.checkpoint is shown as a decoy flag that betrays you when touched!
+      const cpSource = lvl.checkpoint || (diffCfg.checkpointsAllLevels ? lvl.easyCheckpoint : null);
+      this.checkpoint = cpSource ? { x: cpSource.x, y: cpSource.y, w: 22, h: 40 } : null;
+
+      // In Hard Mode, every level with hardRunawayX also becomes a runaway door!
+      const isRunaway = !!lvl.goal.runaway || (diffCfg.id === 'hard' && typeof lvl.goal.hardRunawayX === 'number');
+      const rX = lvl.goal.runaway ? (lvl.goal.runawayX || lvl.goal.x) : (lvl.goal.hardRunawayX || lvl.goal.x);
+      const rY = lvl.goal.runaway ? (lvl.goal.runawayY || lvl.goal.y) : (lvl.goal.hardRunawayY || lvl.goal.y);
+
+      // In Hard Mode, place the door at the far right (rX) and when approached, it teleports UP overhead (rX - 28, startY - 64) with 0.36s phase lock while lethal spikes cover rX..958!
+      const isHard = diffCfg.id === 'hard';
+      const baseGoalX = isHard ? Math.max(874, lvl.goal.x, rX) : lvl.goal.x;
+      const hardUpX = baseGoalX - 24;
+      const hardUpY = Math.max(80, lvl.goal.y - 62);
+
+      this.goal = {
+        x: baseGoalX,
+        y: lvl.goal.y,
+        startX: baseGoalX,
+        startY: lvl.goal.y,
+        w: lvl.goal.w || 36,
+        h: lvl.goal.h || 54,
+        runaway: isRunaway || isHard,
+        runawayTriggered: false,
+        runawayX: isHard ? hardUpX : rX,
+        runawayY: isHard ? hardUpY : rY,
+        phaseTimer: 0,
+        doorSpikeActive: false,
+        doorSpikeRect: {
+          x: baseGoalX + 10,
+          y: lvl.goal.y + (lvl.goal.h || 54) - 16,
+          w: Math.max(36, 958 - (baseGoalX + 10)),
+          h: 16
+        }
+      };
+
+      this.doomTimeLeft = diffCfg.doomTimer || 0;
+      this.stalker = diffCfg.stalkerDrone ? {
+        x: Math.max(8, lvl.spawn.x - 45),
+        y: Math.max(60, lvl.spawn.y - 50),
+        r: 14,
+        speed: 84 + idx * 1.4,
+        warmup: 0.95,
+        angle: 0
+      } : null;
+
+      this.particles.clear();
+      this.player.reset(lvl.spawn.x, lvl.spawn.y);
+      if (this.ui) {
+        this.ui.hideDeathBanner();
+        this.ui.updateHUD();
+      }
+    }
+
+    respawnAtCheckpointOrStart() {
+      const lvl = this.currentLevelData;
+      const diffCfg = this.getDifficultyConfig();
+      this.player.setDifficultyParams(diffCfg);
+
+      for (let i = 0; i < this.traps.length; i++) {
+        this.traps[i].reset();
+      }
+      this.goal.x = this.goal.startX;
+      this.goal.y = this.goal.startY;
+      this.goal.runawayTriggered = false;
+      this.goal.phaseTimer = 0;
+      this.goal.doorSpikeActive = false;
+      this.checkpointBetrayed = false;
+      this.doomTimeLeft = diffCfg.doomTimer || 0;
+      if (this.stalker) {
+        this.stalker.x = Math.max(8, lvl.spawn.x - 42);
+        this.stalker.y = Math.max(60, lvl.spawn.y - 45);
+        this.stalker.warmup = 0.95;
+      }
+
+      const useCp = !diffCfg.fakeCheckpoints && this.checkpointActivated && this.checkpoint;
+      const spawnX = useCp ? this.checkpoint.x : lvl.spawn.x;
+      const spawnY = useCp ? (this.checkpoint.y + 8) : lvl.spawn.y;
+
+      this.player.reset(spawnX, spawnY);
+      this.state = 'PLAYING';
+      if (this.ui) {
+        this.ui.hideDeathBanner();
+        this.ui.updateHUD();
+      }
+    }
+
+    restartLevel() {
+      this.audio.startBGM();
+      if (this.state === 'MENU' || this.state === 'VICTORY') return;
+      this.respawnAtCheckpointOrStart();
+    }
+
+    startOrContinueGame() {
+      this.audio.startBGM();
+      const targetIdx = Math.min(global.LEVELS.length - 1, this.unlockedLevel - 1);
+      this.loadLevel(targetIdx);
+      this.state = 'PLAYING';
+      if (this.ui) {
+        this.ui.showControlGuideIfNeeded();
+        this.ui.updateHUD();
+      }
+    }
+
+    togglePause() {
+      if (this.state === 'PLAYING') {
+        this.state = 'PAUSED';
+        if (this.ui) this.ui.showPauseModal();
+      } else if (this.state === 'PAUSED') {
+        this.resumeGame();
+      }
+    }
+
+    resumeGame() {
+      if (this.state === 'PAUSED') {
+        this.state = 'PLAYING';
+        if (this.ui) this.ui.hideAllModals();
+      }
+    }
+
+    returnToMainMenu() {
+      this.state = 'MENU';
+      if (this.ui) {
+        this.ui.hideDeathBanner();
+        this.ui.showMainMenu();
+      }
+    }
+
+    addScreenShake(magnitude, duration) {
+      if (!this.settings.screenShake) return;
+      this.shakeMagnitude = Math.max(this.shakeMagnitude, magnitude || 6);
+      this.shakeTime = Math.max(this.shakeTime, duration || 0.2);
+    }
+
+    killPlayer(reason) {
+      if (this.player.dead || this.state !== 'PLAYING') return;
+      this.player.dead = true;
+      this.player.deathReason = reason || 'Betrayed by the level design!';
+      this.totalDeaths++;
+      this.levelDeaths++;
+      this.state = 'DEAD';
+      this.respawnTimer = this.difficulty === 'hard' ? 0.55 : 0.68;
+
+      this.audio.playDeath();
+      this.addScreenShake(8, 0.24);
+      this.particles.emitBurst(
+        this.player.x + this.player.w / 2,
+        this.player.y + this.player.h / 2,
+        '#00f0ff',
+        22,
+        60,
+        260,
+        3,
+        8,
+        0.75
+      );
+      this.particles.emitBurst(
+        this.player.x + this.player.w / 2,
+        this.player.y + this.player.h / 2,
+        '#ff2a6d',
+        12,
+        40,
+        180,
+        3,
+        6,
+        0.5
+      );
+
+      this.saveProgress();
+      if (this.ui) {
+        this.ui.updateHUD();
+        this.ui.showDeathBanner(this.player.deathReason);
+      }
+    }
+
+    completeCurrentLevel() {
+      if (this.state !== 'PLAYING') return;
+      this.player.won = true;
+      this.audio.playWin();
+
+      const lvlId = this.currentLevelData.id;
+      const prev = this.completedLevels[lvlId];
+      if (!prev || this.levelDeaths < prev.bestDeaths) {
+        this.completedLevels[lvlId] = {
+          bestDeaths: this.levelDeaths,
+          mode: this.difficulty
+        };
+      } else if (this.difficulty === 'hard') {
+        this.completedLevels[lvlId].mode = 'hard';
+      }
+
+      if (lvlId >= this.unlockedLevel && lvlId < global.LEVELS.length) {
+        this.unlockedLevel = lvlId + 1;
+      }
+      this.saveProgress();
+
+      this.particles.emitBurst(
+        this.goal.x + this.goal.w / 2,
+        this.goal.y + this.goal.h / 2,
+        '#05d5aa',
+        28,
+        70,
+        250,
+        4,
+        8,
+        0.4
+      );
+
+      this.state = 'TRANSITION';
+      this.transitionTimer = 0.72;
+      if (this.ui) this.ui.updateHUD();
+    }
+
+    update(dt) {
+      for (let i = 0; i < this.bgStars.length; i++) {
+        const st = this.bgStars[i];
+        st.x -= st.speed * dt * (this.difficulty === 'hard' ? 1.6 : 1);
+        if (st.x < 0) st.x += this.width;
+      }
+
+      if (this.shakeTime > 0) {
+        this.shakeTime = Math.max(0, this.shakeTime - dt);
+        if (this.shakeTime === 0) this.shakeMagnitude = 0;
+      }
+
+      this.particles.update(dt);
+
+      if (this.state === 'PLAYING') {
+        this.runTime += dt;
+        if (this.ui) this.ui.updateHUD();
+
+        for (let i = 0; i < this.traps.length; i++) {
+          this.traps[i].update(dt, this.player, this.audio, this.particles, this);
+        }
+
+        const solids = this.platforms.slice();
+        for (let i = 0; i < this.traps.length; i++) {
+          const t = this.traps[i];
+          if (t.isSolidForPlayer()) {
+            solids.push(t.getSolidRect());
+          }
+        }
+
+        this.player.update(dt, this.input, solids, this.audio, this.particles);
+        this.input.jumpPressed = false;
+
+        if (this.player.y > this.height + 24) {
+          this.killPlayer('Fell into the endless void!');
+          return;
+        }
+
+        for (let i = 0; i < this.traps.length; i++) {
+          const hb = this.traps[i].getLethalHitbox();
+          if (hb && global.aabbOverlap(this.player, hb)) {
+            this.killPlayer(hb.reason);
+            return;
+          }
+        }
+
+        const diffCfg = this.getDifficultyConfig();
+
+        // Hard Mode Doom Timer
+        if (diffCfg.doomTimer && this.doomTimeLeft > 0) {
+          this.doomTimeLeft = Math.max(0, this.doomTimeLeft - dt);
+          if (this.doomTimeLeft <= 0) {
+            this.killPlayer('HARD MODE DOOM TIMER EXPIRED! Move faster!');
+            return;
+          }
+        }
+
+        // Hard Mode Relentless Crimson Stalker Drone
+        if (this.stalker) {
+          this.stalker.angle += dt * 14;
+          if (this.stalker.warmup > 0) {
+            this.stalker.warmup = Math.max(0, this.stalker.warmup - dt);
+          } else {
+            const tx = this.player.x + this.player.w / 2;
+            const ty = this.player.y + this.player.h / 2;
+            const dx = tx - this.stalker.x;
+            const dy = ty - this.stalker.y;
+            const d = Math.hypot(dx, dy);
+            if (d > 1) {
+              this.stalker.x += (dx / d) * this.stalker.speed * dt;
+              this.stalker.y += (dy / d) * this.stalker.speed * dt;
+            }
+            const stalkerBox = {
+              x: this.stalker.x - this.stalker.r + 3,
+              y: this.stalker.y - this.stalker.r + 3,
+              w: (this.stalker.r - 3) * 2,
+              h: (this.stalker.r - 3) * 2
+            };
+            if (global.aabbOverlap(this.player, stalkerBox)) {
+              this.killPlayer('Sliced by the Hard Mode Crimson Stalker Drone! Never stop moving!');
+              return;
+            }
+          }
+        }
+
+        // Checkpoint activation (or Hard Mode LETHAL BOOBY-TRAPPED Checkpoint!)
+        if (this.checkpoint && !this.checkpointActivated && !this.checkpointBetrayed) {
+          const cpHitbox = {
+            x: this.checkpoint.x + 5,
+            y: this.checkpoint.y + 4,
+            w: 14,
+            h: 36
+          };
+          if (global.aabbOverlap(this.player, cpHitbox)) {
+            if (diffCfg.lethalCheckpoints) {
+              this.checkpointBetrayed = true;
+              this.killPlayer('HARD MODE TROLL: Checkpoint flags are BOOBY-TRAPPED! Jump OVER them!');
+              return;
+            } else {
+              this.checkpointActivated = true;
+              this.audio.playCheckpoint();
+              this.particles.emitBurst(
+                this.checkpoint.x + 11,
+                this.checkpoint.y + 10,
+                '#05d5aa',
+                18,
+                40,
+                180,
+                3,
+                6,
+                0.4
+              );
+              this.particles.emitFloatingText(this.checkpoint.x + 11, this.checkpoint.y - 10, 'CHECKPOINT SAVED!', '#05d5aa');
+              if (this.ui) this.ui.showToast('🚩 Checkpoint Activated!');
+            }
+          }
+        }
+
+        // Runaway exit door behavior (with Hard Mode Instant Mid-Air Back-Teleport & Door Spike!)
+        if (this.goal.runaway && !this.goal.runawayTriggered) {
+          const dist = Math.hypot(
+            (this.player.x + this.player.w / 2) - (this.goal.x + this.goal.w / 2),
+            (this.player.y + this.player.h / 2) - (this.goal.y + this.goal.h / 2)
+          );
+          const triggerReady = diffCfg.id === 'hard'
+            ? (this.player.x + this.player.w >= this.goal.startX - 22 && Math.abs((this.player.y + this.player.h) - (this.goal.startY + this.goal.h)) < 75)
+            : (dist < 76);
+          if (triggerReady) {
+            this.goal.runawayTriggered = true;
+            this.audio.playFakeExit();
+            if (diffCfg.id === 'hard') {
+              this.goal.doorSpikeActive = true;
+              this.goal.phaseTimer = 0.36;
+              this.goal.x = this.goal.runawayX;
+              this.goal.y = this.goal.runawayY;
+              this.particles.emitBurst(this.goal.startX + 18, this.goal.startY + 30, '#ff2a6d', 18, 50, 180, 3, 6, 0.5);
+              this.particles.emitBurst(this.goal.x + 18, this.goal.y + 27, '#05d5aa', 18, 50, 180, 3, 6, 0.3);
+              this.particles.emitFloatingText(
+                this.goal.startX - 45,
+                this.goal.startY - 18,
+                'BRAKE & JUMP UP INTO THE FLOATING DOOR!',
+                '#ff2a6d'
+              );
+            } else {
+              this.particles.emitFloatingText(this.goal.x + 18, this.goal.y - 10, 'CATCH ME IF YOU CAN!', '#ffd166');
+            }
+          }
+        }
+        if (this.goal.phaseTimer > 0) {
+          this.goal.phaseTimer = Math.max(0, this.goal.phaseTimer - dt);
+        }
+        if (this.goal.runaway && this.goal.runawayTriggered && diffCfg.id !== 'hard') {
+          this.goal.x += (this.goal.runawayX - this.goal.x) * Math.min(1, dt * 11);
+          this.goal.y += (this.goal.runawayY - this.goal.y) * Math.min(1, dt * 11);
+        }
+
+        // Check Hard Mode Door Guard Spike collision
+        if (this.goal.doorSpikeActive && global.aabbOverlap(this.player, this.goal.doorSpikeRect)) {
+          this.killPlayer('BAITED BY THE EXIT DOOR! Brake before the door and jump up into the floating portal!');
+          return;
+        }
+
+        if (this.goal.phaseTimer <= 0 && global.aabbOverlap(this.player, this.goal)) {
+          this.completeCurrentLevel();
+        }
+      } else if (this.state === 'DEAD') {
+        this.input.jumpPressed = false;
+        this.respawnTimer -= dt;
+        if (this.respawnTimer <= 0) {
+          this.respawnAtCheckpointOrStart();
+        }
+      } else if (this.state === 'TRANSITION') {
+        this.input.jumpPressed = false;
+        this.transitionTimer -= dt;
+        if (this.transitionTimer <= 0) {
+          if (this.currentLevelIndex + 1 < global.LEVELS.length) {
+            this.loadLevel(this.currentLevelIndex + 1);
+            this.state = 'PLAYING';
+          } else {
+            this.state = 'VICTORY';
+            if (this.ui) this.ui.showVictoryScreen();
+          }
+        }
+      }
+    }
+
+    render() {
+      const ctx = this.ctx;
+      const isHard = this.difficulty === 'hard';
+      ctx.save();
+
+      if (this.shakeTime > 0 && this.shakeMagnitude > 0) {
+        const sx = (Math.random() - 0.5) * 2 * this.shakeMagnitude;
+        const sy = (Math.random() - 0.5) * 2 * this.shakeMagnitude;
+        ctx.translate(sx, sy);
+      }
+
+      const grad = ctx.createLinearGradient(0, 0, 0, this.height);
+      if (isHard) {
+        grad.addColorStop(0, '#0d060c');
+        grad.addColorStop(1, '#1d0b18');
+      } else {
+        grad.addColorStop(0, '#090a10');
+        grad.addColorStop(1, '#121526');
+      }
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, this.width, this.height);
+
+      ctx.strokeStyle = isHard ? 'rgba(255, 42, 109, 0.05)' : 'rgba(148, 163, 184, 0.04)';
+      ctx.lineWidth = 1;
+      for (let gx = 0; gx < this.width; gx += 48) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, this.height);
+        ctx.stroke();
+      }
+      for (let gy = 0; gy < this.height; gy += 48) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(this.width, gy);
+        ctx.stroke();
+      }
+
+      for (let i = 0; i < this.bgStars.length; i++) {
+        const st = this.bgStars[i];
+        ctx.fillStyle = isHard
+          ? 'rgba(255, 150, 180, ' + st.alpha + ')'
+          : 'rgba(226, 232, 240, ' + st.alpha + ')';
+        ctx.fillRect(st.x, st.y, st.r, st.r);
+      }
+
+      if (this.currentLevelData) {
+        ctx.save();
+        ctx.font = '900 115px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = isHard ? 'rgba(255, 42, 109, 0.035)' : 'rgba(255, 255, 255, 0.025)';
+        ctx.fillText(
+          'LEVEL ' + String(this.currentLevelData.id).padStart(2, '0') + ' • ' + this.difficulty.toUpperCase(),
+          this.width / 2,
+          215
+        );
+        ctx.restore();
+      }
+
+      for (let i = 0; i < this.platforms.length; i++) {
+        const p = this.platforms[i];
+        ctx.fillStyle = isHard ? '#1f1224' : '#171b30';
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+
+        if (p.y > 40) {
+          ctx.fillStyle = isHard ? '#ff2a6d' : '#38bdf8';
+          ctx.fillRect(p.x, p.y, p.w, 3);
+        } else {
+          ctx.fillStyle = '#334155';
+          ctx.fillRect(p.x, p.y + p.h - 3, p.w, 3);
+        }
+        ctx.strokeStyle = isHard ? '#3b1c3e' : '#262d4d';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(p.x + 0.5, p.y + 0.5, p.w - 1, p.h - 1);
+      }
+
+      if (this.checkpoint && !this.checkpointBetrayed) {
+        const cp = this.checkpoint;
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillRect(cp.x + 9, cp.y, 3, cp.h);
+        ctx.fillStyle = this.checkpointActivated ? '#05d5aa' : '#ffd166';
+        ctx.beginPath();
+        ctx.moveTo(cp.x + 12, cp.y + 2);
+        ctx.lineTo(cp.x + 30, cp.y + 10);
+        ctx.lineTo(cp.x + 12, cp.y + 18);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      if (this.goal) {
+        const g = this.goal;
+        // Draw Door Guard Spike if triggered in Hard Mode
+        if (g.doorSpikeActive && g.doorSpikeRect) {
+          const sr = g.doorSpikeRect;
+          ctx.fillStyle = '#ff2a6d';
+          for (let i = 0; i < 3; i++) {
+            const sx = sr.x + i * (sr.w / 3);
+            ctx.beginPath();
+            ctx.moveTo(sx, sr.y + sr.h);
+            ctx.lineTo(sx + sr.w / 6, sr.y);
+            ctx.lineTo(sx + sr.w / 3, sr.y + sr.h);
+            ctx.closePath();
+            ctx.fill();
+          }
+        }
+        ctx.save();
+        ctx.shadowColor = 'rgba(5, 213, 170, 0.55)';
+        ctx.shadowBlur = 14;
+        ctx.fillStyle = '#064e3b';
+        ctx.fillRect(g.x, g.y, g.w, g.h);
+        ctx.strokeStyle = '#05d5aa';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(g.x + 1.5, g.y + 1.5, g.w - 3, g.h - 3);
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = 'rgba(5, 213, 170, 0.35)';
+        ctx.fillRect(g.x + 6, g.y + 6, g.w - 12, g.h - 6);
+
+        ctx.font = 'bold 10px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#05d5aa';
+        ctx.fillText('EXIT', g.x + g.w / 2, g.y - 6);
+        ctx.restore();
+      }
+
+      for (let i = 0; i < this.traps.length; i++) {
+        this.traps[i].render(ctx, this.settings.showHitboxes);
+      }
+
+      this.player.render(ctx, this.settings.showHitboxes, this.difficulty);
+
+      // Render Hard Mode Crimson Stalker Sawblade Drone
+      if (this.stalker) {
+        const st = this.stalker;
+        ctx.save();
+        ctx.translate(st.x, st.y);
+        ctx.rotate(st.angle);
+        ctx.globalAlpha = st.warmup > 0 ? 0.45 : 1.0;
+        ctx.fillStyle = '#ff2a6d';
+        const teeth = 8;
+        for (let i = 0; i < teeth; i++) {
+          ctx.rotate((Math.PI * 2) / teeth);
+          ctx.beginPath();
+          ctx.moveTo(0, -st.r - 4);
+          ctx.lineTo(5, -st.r + 3);
+          ctx.lineTo(-5, -st.r + 3);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(0, 0, st.r - 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#1f1224';
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#ff2a6d';
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 0, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffd166';
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Render Hard Mode Doom Clock HUD on Canvas
+      if (isHard && this.doomTimeLeft > 0) {
+        ctx.save();
+        ctx.font = '800 13px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillStyle = this.doomTimeLeft < 6 ? '#ff2a6d' : '#fda4af';
+        ctx.fillText('🔥 HARD DOOM CLOCK: ' + this.doomTimeLeft.toFixed(1) + 's  |  🚩 FLAGS = LETHAL', this.width - 18, 48);
+        ctx.restore();
+      }
+
+      this.particles.render(ctx);
+
+      if (this.state === 'TRANSITION') {
+        const progress = 1 - Math.max(0, this.transitionTimer / 0.72);
+        ctx.fillStyle = 'rgba(5, 213, 170, ' + (progress * 0.45) + ')';
+        ctx.fillRect(0, 0, this.width, this.height);
+        ctx.font = '900 34px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('LEVEL CLEARED!', this.width / 2, this.height / 2);
+      }
+
+      ctx.restore();
+    }
+  }
+
+  global.Game = Game;
+})(window);
+
+/**
+ * js/main.js
+ * Application Entry Point, Keyboard & Touch Input Wiring,
+ * Responsive Viewport Scaling, and 60fps Animation Loop.
+ */
+(function (global) {
+  'use strict';
+
+  let activeRafId = null;
+
+  function initApp() {
+    const canvas = document.getElementById('game-canvas');
+    if (!canvas) return;
+
+    const audio = new global.AudioManager();
+    const game = new global.Game(canvas, audio);
+    const ui = new global.UIManager(game, audio);
+    game.setUI(ui);
+
+    // Expose instance for automated QA testing and debugging
+    global.__TROLL_GAME__ = game;
+    global.__TROLL_UI__ = ui;
+    global.__TROLL_AUDIO__ = audio;
+
+    // Prevent browser scrolling on gameplay keys
+    const scrollKeys = new Set([
+      'Space',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowRight'
+    ]);
+
+    window.addEventListener(
+      'keydown',
+      (e) => {
+        if (scrollKeys.has(e.code)) {
+          e.preventDefault();
+        }
+
+        const code = e.code;
+        const key = (e.key || '').toLowerCase();
+
+        if (code === 'Escape' || key === 'p') {
+          if (game.state === 'PLAYING' || game.state === 'PAUSED') {
+            game.togglePause();
+          }
+          return;
+        }
+
+        if (key === 'r') {
+          if (game.state === 'PLAYING' || game.state === 'DEAD') {
+            game.restartLevel();
+          }
+          return;
+        }
+
+        if (key === 'm') {
+          audio.toggleMute();
+          ui.syncSettingsUI();
+          return;
+        }
+
+        if (code === 'ArrowLeft' || key === 'a') {
+          game.input.left = true;
+        }
+        if (code === 'ArrowRight' || key === 'd') {
+          game.input.right = true;
+        }
+        if (code === 'Space' || code === 'ArrowUp' || key === 'w') {
+          if (!game.input.jumpHeld) {
+            game.input.jumpPressed = true;
+          }
+          game.input.jumpHeld = true;
+        }
+      },
+      { passive: false }
+    );
+
+    window.addEventListener('keyup', (e) => {
+      const code = e.code;
+      const key = (e.key || '').toLowerCase();
+
+      if (code === 'ArrowLeft' || key === 'a') {
+        game.input.left = false;
+      }
+      if (code === 'ArrowRight' || key === 'd') {
+        game.input.right = false;
+      }
+      if (code === 'Space' || code === 'ArrowUp' || key === 'w') {
+        game.input.jumpHeld = false;
+      }
+    });
+
+    // Touch / On-screen button bindings
+    const bindHoldBtn = (id, onDown, onUp) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const start = (e) => {
+        e.preventDefault();
+        audio.initContext();
+        onDown();
+      };
+      const end = (e) => {
+        e.preventDefault();
+        onUp();
+      };
+      el.addEventListener('mousedown', start);
+      el.addEventListener('mouseup', end);
+      el.addEventListener('mouseleave', end);
+      el.addEventListener('touchstart', start, { passive: false });
+      el.addEventListener('touchend', end, { passive: false });
+      el.addEventListener('touchcancel', end, { passive: false });
+    };
+
+    bindHoldBtn(
+      'btn-touch-left',
+      () => { game.input.left = true; },
+      () => { game.input.left = false; }
+    );
+    bindHoldBtn(
+      'btn-touch-right',
+      () => { game.input.right = true; },
+      () => { game.input.right = false; }
+    );
+    bindHoldBtn(
+      'btn-touch-jump',
+      () => {
+        game.input.jumpPressed = true;
+        game.input.jumpHeld = true;
+      },
+      () => {
+        game.input.jumpHeld = false;
+      }
+    );
+
+    // Responsive canvas container scaling
+    function handleResize() {
+      game.render();
+    }
+    window.addEventListener('resize', handleResize);
+
+    // Start main loop
+    if (activeRafId) {
+      cancelAnimationFrame(activeRafId);
+    }
+
+    let lastTime = performance.now();
+    function loop(now) {
+      const rawDt = (now - lastTime) / 1000;
+      lastTime = now;
+      // Cap dt at 1/30s and sub-step at 1/60s for rock-solid collision consistency
+      const clampedDt = Math.min(rawDt, 0.05);
+      const maxStep = 1 / 60;
+      let remaining = clampedDt;
+      while (remaining > 0.0001) {
+        const step = Math.min(remaining, maxStep);
+        game.update(step);
+        remaining -= step;
+      }
+      game.render();
+      activeRafId = requestAnimationFrame(loop);
+    }
+
+    activeRafId = requestAnimationFrame(loop);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
+})(window);
+
+</script>
+</body>
+</html>
